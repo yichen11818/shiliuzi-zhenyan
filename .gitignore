@@ -1,0 +1,5 @@
+.netlify/
+.codex-temp/
+node_modules/
+.env
+.env.*

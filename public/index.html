@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>十六字真言 V5.0 · 以终为始 目标拆解 发散收敛 复盘迭代</title>
+<style>
+:root{--bg:#0b0d14;--panel:#141826;--line:#262c40;--ink:#e8ecf5;--mute:#8a93a8;--red:#ff4d5e;--c1:#ff4d5e;--c2:#ffb547;--c3:#3ddc97;--c4:#4da3ff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.7;overflow-x:hidden}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#glow{position:fixed;left:50%;top:40%;width:560px;height:560px;border-radius:50%;pointer-events:none;z-index:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,77,94,.13),transparent 62%);transition:left .25s ease-out,top .25s ease-out}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:30;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4))}
+nav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:16px}
+nav a{width:12px;height:12px;border-radius:50%;border:2px solid var(--mute);display:block;position:relative;transition:.3s}
+nav a.on{background:var(--red);border-color:var(--red);transform:scale(1.35)}
+nav a span{position:absolute;right:22px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:13px;color:var(--ink);opacity:0;transition:.3s;pointer-events:none}
+nav a:hover span,nav a:focus-visible span{opacity:1}
+main{position:relative;z-index:2}
+section{min-height:100vh;padding:110px 7vw 90px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.tag{font-size:13px;letter-spacing:.3em;color:var(--mute);margin-bottom:8px}
+h2{font-size:clamp(34px,5vw,58px);letter-spacing:.18em;margin-bottom:8px}
+h2 em{font-style:normal;color:var(--accent,var(--red));text-shadow:0 0 36px var(--accent,var(--red))}
+.sub{color:var(--mute);max-width:660px;text-align:center;margin-bottom:44px}
+.hand{font-family:"STKaiti","KaiTi","楷体",serif;color:var(--red);font-size:24px;letter-spacing:.1em}
+.rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.in .rv{opacity:1;transform:none}
+/* hero */
+#hero h1{font-size:clamp(40px,7vw,92px);letter-spacing:.2em;font-weight:900;text-align:center}
+#hero h1 span{display:inline-block;opacity:0;transform:translateY(-60px) rotate(-12deg);animation:drop .8s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--i)*.09s + .2s)}
+@keyframes drop{to{opacity:1;transform:none}}
+.type{height:34px;margin:10px 0 18px;font-size:20px;color:var(--mute);letter-spacing:.12em}
+.type b{color:var(--ink);font-weight:600}
+.caret{display:inline-block;width:2px;height:22px;background:var(--red);vertical-align:middle;margin-left:4px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.ring-wrap{position:relative;width:min(560px,88vw);aspect-ratio:1}
+.ring-wrap svg{width:100%;height:100%;overflow:visible}
+.spin{transform-origin:300px 300px;animation:spin 40s linear infinite}
+.spin-r{transform-origin:300px 300px;animation:spin 26s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.arc{fill:none;stroke-width:10;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;animation:draw 1.4s cubic-bezier(.6,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.axis{stroke:var(--red);stroke-width:2;stroke-dasharray:3 9;opacity:0;animation:fade 1s 1.6s forwards}
+@keyframes fade{to{opacity:.7}}
+.q{position:absolute;white-space:nowrap;transform:translate(-50%,-50%);background:none;border:0;cursor:pointer;color:var(--ink);font:inherit;font-size:clamp(17px,2.6vw,24px);font-weight:700;letter-spacing:.18em;opacity:0;animation:pop .7s cubic-bezier(.3,1.6,.5,1) forwards}
+.q i{display:block;font-style:normal;padding:8px 16px;border-radius:30px;background:rgba(20,24,38,.85);border:1px solid var(--line);transition:.35s}
+.q:hover i,.q:focus-visible i{border-color:var(--qc);color:var(--qc);box-shadow:0 0 28px var(--qc);transform:scale(1.12)}
+@keyframes pop{from{opacity:0;transform:translate(-50%,-50%) scale(.3)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.core .v{font-size:clamp(34px,6vw,62px);font-weight:900;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c1));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s linear infinite}
+@keyframes sheen{to{background-position:300% 0}}
+.core small{display:block;color:var(--mute);letter-spacing:.3em;font-size:13px}
+.hint{margin-top:30px;color:var(--mute);font-size:13px;letter-spacing:.3em;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(8px)}}
+/* s1 以终为始 */
+.loop{width:min(760px,92vw);height:auto;margin-bottom:6px;overflow:visible}
+.flow{fill:none;stroke:var(--red);stroke-width:3;stroke-dasharray:10 10;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-40}}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;width:min(1040px,100%)}
+.card{perspective:1000px;height:230px;cursor:pointer;outline:none}
+.card-in{position:relative;width:100%;height:100%;transition:transform .8s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.card:hover .card-in,.card:focus-visible .card-in,.card.flip .card-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:18px;border:1px solid var(--line);background:var(--panel);backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.face .L{font-size:62px;font-weight:900;line-height:1;color:var(--cc);text-shadow:0 0 30px var(--cc)}
+.face .t{margin-top:12px;font-size:18px;font-weight:700}
+.face.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--panel),#1d2236);border-color:var(--cc)}
+.face.back p{color:var(--mute);font-size:15px}
+.face.back b{color:var(--cc);display:block;font-size:19px;margin-bottom:10px}
+/* s2 目标拆解 */
+.tree{width:min(1000px,100%);height:auto;overflow:visible}
+.tree .ln{fill:none;stroke:#566079;stroke-width:2;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1s ease-out var(--d)}
+.tree .nd{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center;transition:opacity .5s var(--d),transform .6s cubic-bezier(.3,1.7,.5,1) var(--d)}
+.in .tree .ln{stroke-dashoffset:0}
+.in .tree .nd{opacity:1;transform:scale(1)}
+.tree .nd:hover circle{filter:drop-shadow(0 0 10px var(--red))}
+.tree text{fill:var(--ink);font-size:15px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.tree .lbl{font-family:"STKaiti","KaiTi",serif;fill:var(--red);font-size:24px}
+.goal-pulse{transform-box:fill-box;transform-origin:center;animation:gp 2.2s ease-out infinite}
+@keyframes gp{from{opacity:.8;transform:scale(1)}to{opacity:0;transform:scale(2.2)}}
+/* s3 发散收敛 */
+.dc{position:relative;width:min(1000px,100%);aspect-ratio:2/1;border:1px solid var(--line);border-radius:22px;background:radial-gradient(circle at 50% 50%,#161b2c,var(--panel));overflow:hidden}
+.dc canvas{width:100%;height:100%;display:block}
+.dc .phase{position:absolute;left:24px;top:18px;font-size:22px;font-weight:700;letter-spacing:.2em;transition:color .5s}
+.btns{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;justify-content:center}
+.btn{font:inherit;font-size:15px;letter-spacing:.15em;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:9px 24px;cursor:pointer;transition:.3s}
+.btn:hover,.btn:focus-visible,.btn.on{border-color:var(--c3);color:var(--c3);box-shadow:0 0 20px rgba(61,220,151,.35)}
+/* s4 复盘迭代 */
+.pipe{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;width:min(1120px,100%)}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:150px;transition:.5s;position:relative}
+.step.act{border-color:var(--c4);box-shadow:0 0 34px rgba(77,163,255,.4);transform:translateY(-8px)}
+.step h4{font-size:15px;letter-spacing:.12em;margin-bottom:10px;color:var(--mute)}
+.step.act h4{color:var(--c4)}
+.todo li{list-style:none;display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}
+.todo li i{width:16px;height:16px;border:2px solid var(--mute);border-radius:4px;position:relative;transition:.3s}
+.todo li.ok i{border-color:var(--c3);background:var(--c3)}
+.todo li.ok i::after{content:"";position:absolute;left:3px;top:0;width:5px;height:9px;border:solid #0b0d14;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.todo li s{text-decoration:none;display:inline-block;height:6px;border-radius:3px;background:#39415a;width:var(--w)}
+.bar{width:130px;height:10px;border-radius:5px;background:#262c40;overflow:hidden}
+.bar b{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c4),var(--c3));transition:width 1.2s ease-in-out}
+.kiss{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kiss span{width:52px;height:44px;display:grid;place-items:center;border-radius:8px;background:#1d2236;font-weight:900;font-size:18px;color:var(--mute);transition:.4s}
+.kiss span.lit{background:var(--kc);color:#0b0d14;box-shadow:0 0 18px var(--kc)}
+.ver{font-size:44px;font-weight:900;color:var(--c4);text-align:center;line-height:1.1}
+.ver.bump{animation:bump .5s cubic-bezier(.3,1.8,.5,1)}
+@keyframes bump{40%{transform:scale(1.4)}}
+.sop{font-size:22px;font-weight:900;letter-spacing:.15em;text-align:center;padding:8px 16px;border:2px solid var(--red);border-radius:40px;color:var(--red)}
+.step.gold{border-color:var(--red);box-shadow:0 0 40px rgba(255,77,94,.5)}
+.arw{color:var(--mute);font-size:26px;animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(6px);color:var(--c4)}}
+.motto{margin-top:36px;font-size:30px}
+.recap{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.recap a{text-decoration:none;color:var(--qc);font-size:clamp(22px,3.4vw,34px);font-weight:900;letter-spacing:.2em;padding:14px 26px;border:1px solid var(--line);border-radius:18px;transition:.35s}
+.recap a:hover{border-color:var(--qc);box-shadow:0 0 30px var(--qc);transform:translateY(-6px)}
+footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
+@media (max-width:760px){.cards{grid-template-columns:1fr 1fr}.card{height:200px}nav{display:none}.dc{aspect-ratio:1/1}.arw{transform:rotate(90deg);animation:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="glow" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"></div>
+<nav aria-label="章节导航">
+  <a href="#hero"><span>十六字真言</span></a>
+  <a href="#s1"><span>以终为始</span></a>
+  <a href="#s2"><span>目标拆解</span></a>
+  <a href="#s3"><span>发散收敛</span></a>
+  <a href="#s4"><span>复盘迭代</span></a>
+</nav>
+<main>
+<section id="hero">
+  <h1 aria-label="十六字真言"><span style="--i:0">十</span><span style="--i:1">六</span><span style="--i:2">字</span><span style="--i:3">真</span><span style="--i:4">言</span></h1>
+  <div class="type" aria-live="polite"><b id="typed"></b><span class="caret"></span></div>
+  <div class="ring-wrap">
+    <svg viewBox="0 0 600 600" aria-hidden="true">
+      <defs><filter id="blur"><feGaussianBlur stdDeviation="6"/></filter></defs>
+      <circle cx="300" cy="300" r="270" fill="none" stroke="#262c40" stroke-dasharray="2 10" class="spin"/>
+      <circle cx="300" cy="300" r="150" fill="none" stroke="#262c40" stroke-width="1.5" class="spin-r" stroke-dasharray="40 14"/>
+      <g filter="url(#blur)" opacity=".55">
+        <path d="M92 270.8A210 210 0 0 1 270.8 92" stroke="var(--c1)" class="arc" style="animation-delay:.3s"/>
+        <path d="M329.2 92A210 210 0 0 1 508 270.8" stroke="var(--c2)" class="arc" style="animation-delay:.6s"/>
+        <path d="M508 329.2A210 210 0 0 1 329.2 508" stroke="var(--c3)" class="arc" style="animation-delay:.9s"/>
+        <path d="M270.8 508A210 210 0 0 1 92 329.2" stroke="var(--c4)" class="arc" style="animation-delay:1.2s"/>
+      </g>
+      <path d="M92 270.8A210 210 0 0 1 270.8 92" stroke="var(--c1)" class="arc" style="animation-delay:.3s"/>
+      <path d="M329.2 92A210 210 0 0 1 508 270.8" stroke="var(--c2)" class="arc" style="animation-delay:.6s"/>
+      <path d="M508 329.2A210 210 0 0 1 329.2 508" stroke="var(--c3)" class="arc" style="animation-delay:.9s"/>
+      <path d="M270.8 508A210 210 0 0 1 92 329.2" stroke="var(--c4)" class="arc" style="animation-delay:1.2s"/>
+      <line x1="300" y1="20" x2="300" y2="110" class="axis"/><line x1="300" y1="490" x2="300" y2="580" class="axis"/>
+      <line x1="20" y1="300" x2="110" y2="300" class="axis"/><line x1="490" y1="300" x2="580" y2="300" class="axis"/>
+      <g class="spin"><circle cx="300" cy="90" r="7" fill="var(--red)"/><circle cx="300" cy="510" r="5" fill="var(--c3)"/></g>
+      <g class="spin-r"><circle cx="150" cy="300" r="5" fill="var(--c4)"/><circle cx="450" cy="300" r="4" fill="var(--c2)"/></g>
+    </svg>
+    <button class="q" data-go="s1" style="left:25.25%;top:25.25%;--qc:var(--c1);animation-delay:1.3s"><i>以终为始</i></button>
+    <button class="q" data-go="s2" style="left:74.75%;top:25.25%;--qc:var(--c2);animation-delay:1.5s"><i>目标拆解</i></button>
+    <button class="q" data-go="s3" style="left:74.75%;top:74.75%;--qc:var(--c3);animation-delay:1.7s"><i>发散收敛</i></button>
+    <button class="q" data-go="s4" style="left:25.25%;top:74.75%;--qc:var(--c4);animation-delay:1.9s"><i>复盘迭代</i></button>
+    <div class="core"><div class="v">V5.0</div><small>点击任一象限</small></div>
+  </div>
+  <div class="hint">↓ 向下滚动，逐环展开</div>
+</section>
+<section id="s1" style="--accent:var(--c1)">
+  <div class="tag rv">01 · BEGIN WITH THE END</div>
+  <h2 class="rv"><em>以终</em>为始</h2>
+  <p class="sub rv" style="--d:.1s">先想清楚终点长什么样，再倒推今天该做什么。把任务说清楚，是一切执行的起点。</p>
+  <svg class="loop rv" style="--d:.2s" viewBox="0 0 760 110" aria-hidden="true">
+    <path class="flow" d="M700 90 C 600 0, 160 0, 60 80"/>
+    <path d="M60 80 l6 -20 m-6 20 l20 -6" stroke="var(--red)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="380" y="46" text-anchor="middle" class="hand" fill="var(--red)" style="font-size:24px">时常回看，来来往往</text>
+  </svg>
+  <div class="cards">
+    <div class="card rv" tabindex="0" role="button" aria-label="S 任务是什么" style="--cc:var(--c1);--d:.25s"><div class="card-in">
+      <div class="face"><div class="L">S</div><div class="t">任务是什么？</div></div>
+      <div class="face back"><b>Specific · 具体</b><p>一句话讲清要交付的东西，别人听完不会问“所以要做什么”。</p></div></div></div>
+    <div class="card rv" tabindex="0" role="button" aria-label="M 怎么算做好" style="--cc:var(--c2);--d:.35s"><div class="card-in">
+      <div class="face"><div class="L">M</div><div class="t">怎么算做好？</div></div>
+      <div class="face back"><b>Measurable · 可衡量</b><p>定义验收标准：数量、质量、指标，做完能被客观检验。</p></div></div></div>
+    <div class="card rv" tabindex="0" role="button" aria-label="T 时间点" style="--cc:var(--c3);--d:.45s"><div class="card-in">
+      <div class="face"><div class="L">T</div><div class="t">时间点</div></div>
+      <div class="face back"><b>Time-bound · 有时限</b><p>截止时间和关键节点，没有时间的目标只是愿望。</p></div></div></div>
+    <div class="card rv" tabindex="0" role="button" aria-label="R 结果和价值" style="--cc:var(--c4);--d:.55s"><div class="card-in">
+      <div class="face"><div class="L">R</div><div class="t">结果和价值？</div></div>
+      <div class="face back"><b>Result · 结果价值</b><p>做成之后带来什么改变，为谁创造了什么价值。</p></div></div></div>
+  </div>
+</section>
+
+<section id="s2" style="--accent:var(--c2)">
+  <div class="tag rv">02 · BREAK IT DOWN</div>
+  <h2 class="rv"><em>目标</em>拆解</h2>
+  <p class="sub rv" style="--d:.1s">大事化小，小事化了。目标拆成子目标，子目标拆成今天就能动手的任务。</p>
+  <svg class="tree" id="tree" viewBox="0 0 1000 520" role="img" aria-label="目标拆解为三个子目标，每个子目标拆解为三个任务"></svg>
+</section>
+
+<section id="s3" style="--accent:var(--c3)">
+  <div class="tag rv">03 · DIVERGE &amp; CONVERGE</div>
+  <h2 class="rv"><em>发散</em>收敛</h2>
+  <p class="sub rv" style="--d:.1s">面对一个任务，先把可能性尽量铺开，再筛选、排序、连成可执行的路径。</p>
+  <div class="dc rv" style="--d:.2s"><canvas id="dc" aria-label="发散与收敛动画"></canvas><div class="phase" id="phase">发散策略</div></div>
+  <div class="btns rv" style="--d:.3s">
+    <button class="btn" data-m="div">发散</button><button class="btn" data-m="conv">收敛</button><button class="btn on" data-m="auto">自动播放</button>
+  </div>
+  <p class="hand rv" style="margin-top:26px;--d:.4s">充分发散，才能有好的收敛</p>
+</section>
+<section id="s4" style="--accent:var(--c4)">
+  <div class="tag rv">04 · REVIEW &amp; ITERATE</div>
+  <h2 class="rv"><em>复盘</em>迭代</h2>
+  <p class="sub rv" style="--d:.1s">行动计划 → 执行 → KISS 复盘 → 新版本计划。每转一圈升级一次，跑顺了就沉淀为 SOP。</p>
+  <div class="pipe rv" style="--d:.2s">
+    <div class="step" id="p0"><h4>TODO 行动计划</h4>
+      <ul class="todo" id="todo"><li><i></i><s style="--w:70px"></s></li><li><i></i><s style="--w:90px"></s></li><li><i></i><s style="--w:60px"></s></li><li><i></i><s style="--w:80px"></s></li></ul></div>
+    <span class="arw" aria-hidden="true">➜</span>
+    <div class="step" id="p1"><h4>执行</h4><div class="bar"><b id="bar"></b></div></div>
+    <span class="arw" aria-hidden="true">➜</span>
+    <div class="step" id="p2"><h4>KISS 复盘</h4>
+      <div class="kiss" id="kiss"><span style="--kc:var(--c3)" title="Keep 保持">K</span><span style="--kc:var(--c2)" title="Improve 改进">I</span><span style="--kc:var(--c4)" title="Start 开始">S</span><span style="--kc:var(--c1)" title="Stop 停止">S</span></div></div>
+    <span class="arw" aria-hidden="true">➜</span>
+    <div class="step" id="p3"><h4>行动计划</h4><div class="ver" id="ver" aria-live="polite">V1.0</div></div>
+    <span class="arw" aria-hidden="true">➜</span>
+    <div class="step" id="p4"><h4>沉淀</h4><div class="sop">SOP</div></div>
+  </div>
+  <p class="sub rv" style="margin:26px 0 0;--d:.3s">K 保持 · I 改进 · S 开始 · S 停止</p>
+  <p class="hand motto rv" style="--d:.4s">凡事迭代 5 遍！</p>
+</section>
+
+<section id="end">
+  <div class="tag rv">RECAP</div>
+  <h2 class="rv">十六字真言 <em>V5.0</em></h2>
+  <div class="recap rv" style="--d:.15s">
+    <a href="#s1" style="--qc:var(--c1)">以终为始</a><a href="#s2" style="--qc:var(--c2)">目标拆解</a><a href="#s3" style="--qc:var(--c3)">发散收敛</a><a href="#s4" style="--qc:var(--c4)">复盘迭代</a>
+  </div>
+  <footer class="rv" style="--d:.3s">一个闭环，反复转动 · 根据手绘笔记整理</footer>
+</section>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,reduce?Math.min(ms,50):ms));
+
+/* 背景星点连线 */
+(()=>{const c=$('#bg'),x=c.getContext('2d');let W,H,P=[],m={x:-999,y:-999};
+  const fit=()=>{W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devicePixelRatio;
+    P=Array.from({length:Math.min(90,innerWidth/16)},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35}))};
+  fit();addEventListener('resize',fit);
+  addEventListener('pointermove',e=>{m.x=e.clientX*devicePixelRatio;m.y=e.clientY*devicePixelRatio});
+  const D=130*devicePixelRatio;
+  (function f(){x.clearRect(0,0,W,H);
+    for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      const dm=Math.hypot(p.x-m.x,p.y-m.y);if(dm<D){p.x+=(p.x-m.x)/dm;p.y+=(p.y-m.y)/dm}
+      x.fillStyle='rgba(140,150,180,.5)';x.beginPath();x.arc(p.x,p.y,1.6*devicePixelRatio,0,7);x.fill()}
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
+      if(d<D){x.strokeStyle=`rgba(120,130,170,${.18*(1-d/D)})`;x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.stroke()}}
+    if(!reduce)requestAnimationFrame(f)})();
+})();
+
+/* 光晕跟随、滚动进度 */
+addEventListener('pointermove',e=>{$('#glow').style.left=e.clientX+'px';$('#glow').style.top=e.clientY+'px'});
+addEventListener('scroll',()=>{const h=document.documentElement;$('#progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+/* 打字机 */
+(async()=>{const w=['以终为始','目标拆解','发散收敛','复盘迭代'],el=$('#typed');await sleep(1600);
+  for(let k=0;;k=(k+1)%4){for(let i=1;i<=4;i++){el.textContent=w[k].slice(0,i);await sleep(150)}
+    await sleep(1500);for(let i=3;i>=0;i--){el.textContent=w[k].slice(0,i);await sleep(70)}await sleep(300)}})();
+
+/* 象限跳转、卡片翻转 */
+$$('.q').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.go).scrollIntoView({behavior:'smooth'}));
+$$('.card').forEach(c=>{c.onclick=()=>c.classList.toggle('flip');c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.classList.toggle('flip')}}});
+/* 目标拆解树 */
+(()=>{const svg=$('#tree'),NS='http://www.w3.org/2000/svg';
+  const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+  const lines=mk('g',{}),nodes=mk('g',{});
+  const link=(x1,y1,x2,y2,d,hot)=>{const my=(y1+y2)/2,p=mk('path',{class:'ln',d:`M${x1} ${y1} C${x1} ${my},${x2} ${my},${x2} ${y2}`},lines);
+    const L=p.getTotalLength();p.style.setProperty('--len',L);p.style.setProperty('--d',d+'s');if(hot)p.style.stroke='var(--red)';
+    if(!reduce){const dot=mk('circle',{r:3,fill:hot?'var(--red)':'var(--c2)'},lines);
+      const am=mk('animateMotion',{dur:(1.6+Math.random()).toFixed(2)+'s',repeatCount:'indefinite',path:p.getAttribute('d')},dot)}};
+  const node=(x,y,r,d,txt,col)=>{const g=mk('g',{class:'nd'},nodes);g.style.setProperty('--d',d+'s');
+    mk('circle',{cx:x,cy:y,r,fill:'#141826',stroke:col,'stroke-width':3},g);if(txt)mk('text',{x,y},g).textContent=txt;return g};
+  const G={x:500,y:70},subs=[200,500,800],names=['子目标 A','子目标 B','子目标 C'];
+  const pulse=mk('circle',{cx:G.x,cy:G.y,r:46,fill:'none',stroke:'var(--red)','stroke-width':2,class:'goal-pulse'},nodes);
+  node(G.x,G.y,46,0,'目标','var(--red)');
+  subs.forEach((sx,i)=>{link(G.x,G.y+46,sx,240-38,.3+i*.15);node(sx,240,38,.8+i*.15,names[i],'var(--c2)');
+    [-90,0,90].forEach((o,j)=>{const tx=sx+o,d=1.3+i*.25+j*.08,hot=i===2&&j===2;
+      link(sx,278,tx,440-22,d,hot);node(tx,440,22,d+.6,hot?'任务':String(i*3+j+1),hot?'var(--red)':'#8a93a8')})});
+  const l1=mk('text',{x:300,y:130,class:'lbl'},nodes);l1.textContent='大事化小';
+  const l2=mk('text',{x:95,y:345,class:'lbl'},nodes);l2.textContent='小事化“了”';
+  [l1,l2].forEach((t,i)=>{t.classList.add('nd');t.style.setProperty('--d',(1+i*1.2)+'s')});
+})();
+/* 发散收敛画布 */
+const DC=(()=>{const c=$('#dc'),x=c.getContext('2d'),ph=$('#phase');let W=1,H=1,mode='idle',t=0;
+  const core={x:.5,y:.5,tx:.5,ty:.5},N=64;
+  const P=Array.from({length:N},()=>({x:.5,y:.5,tx:.5,ty:.5,a:0,ta:0,r:2+Math.random()*3}));
+  const fit=()=>{const d=devicePixelRatio;W=c.width=c.clientWidth*d;H=c.height=c.clientHeight*d};
+  fit();addEventListener('resize',fit);
+  const set=m=>{mode=m;
+    if(m==='idle'){core.tx=.5;P.forEach(p=>{p.tx=.5;p.ty=.5;p.ta=0});ph.textContent='任务';ph.style.color='var(--ink)'}
+    if(m==='div'){core.tx=.5;P.forEach((p,i)=>{const a=i/N*Math.PI*2+Math.random()*.3,k=.3+Math.random()*.7;
+      p.tx=.5+Math.cos(a)*.44*k;p.ty=.5+Math.sin(a)*.42*k*(W/H>1.5?1:.9);p.ta=1});ph.textContent='发散策略';ph.style.color='var(--c2)'}
+    if(m==='conv'){core.tx=.12;P.forEach((p,i)=>{if(i<15){const row=i/5|0,col=i%5;p.tx=.3+col*.14;p.ty=.25+row*.25;p.ta=1}
+      else{p.tx=.12;p.ty=.5;p.ta=0}});ph.textContent='收敛策略';ph.style.color='var(--c3)'}};
+  const arrow=(x1,y1,x2,y2,col,al)=>{const a=Math.atan2(y2-y1,x2-x1),s=9*devicePixelRatio;
+    x.globalAlpha=al;x.strokeStyle=col;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();x.setLineDash([]);
+    x.fillStyle=col;x.beginPath();x.moveTo(x2,y2);x.lineTo(x2-s*Math.cos(a-.4),y2-s*Math.sin(a-.4));x.lineTo(x2-s*Math.cos(a+.4),y2-s*Math.sin(a+.4));x.fill()};
+  (function f(){t+=.016;const k=reduce?1:.06,d=devicePixelRatio;x.clearRect(0,0,W,H);
+    core.x+=(core.tx-core.x)*k;const cx=core.x*W,cy=core.y*H;
+    P.forEach(p=>{p.x+=(p.tx-p.x)*k;p.y+=(p.ty-p.y)*k;p.a+=(p.ta-p.a)*k});
+    x.lineWidth=1.5*d;
+    if(mode!=='conv')P.forEach(p=>{if(p.a<.02)return;const px=p.x*W,py=p.y*H,dd=Math.hypot(px-cx,py-cy);if(dd<40*d)return;
+      const ux=(px-cx)/dd,uy=(py-cy)/dd;arrow(cx+ux*34*d,cy+uy*34*d,px-ux*(p.r+4)*d,py-uy*(p.r+4)*d,'#ffb547',p.a*.45)});
+    else for(let r=0;r<3;r++){x.setLineDash([6*d,6*d]);x.lineDashOffset=-t*40;
+      const q0=P[r*5];arrow(cx+30*d,cy,q0.x*W-12*d,q0.y*H,'#3ddc97',q0.a*.8);
+      for(let j=0;j<4;j++){const a=P[r*5+j],b=P[r*5+j+1];x.setLineDash([6*d,6*d]);arrow(a.x*W+10*d,a.y*H,b.x*W-12*d,b.y*H,'#3ddc97',Math.min(a.a,b.a)*.8)}}
+    P.forEach((p,i)=>{if(p.a<.02)return;x.globalAlpha=p.a;x.fillStyle=mode==='conv'?'#3ddc97':'#ffb547';
+      x.beginPath();x.arc(p.x*W,p.y*H,(mode==='conv'?6:p.r)*d,0,7);x.fill()});
+    x.globalAlpha=1;const pr=(26+Math.sin(t*3)*3)*d;
+    x.strokeStyle='#ff4d5e';x.lineWidth=3*d;x.beginPath();x.arc(cx,cy,pr,0,7);x.stroke();
+    x.globalAlpha=.3+.3*Math.sin(t*3);x.beginPath();x.arc(cx,cy,pr+10*d,0,7);x.stroke();
+    x.globalAlpha=1;x.fillStyle='#ff4d5e';x.beginPath();x.arc(cx,cy,10*d,0,7);x.fill();
+    requestAnimationFrame(f)})();
+  let token=0;
+  const auto=async()=>{const my=++token;while(my===token){set('idle');await sleep(1000);if(my!==token)return;
+    set('div');await sleep(3800);if(my!==token)return;set('conv');await sleep(4200)}};
+  $$('.btn').forEach(b=>b.onclick=()=>{$$('.btn').forEach(o=>o.classList.toggle('on',o===b));
+    if(b.dataset.m==='auto')auto();else{token++;set(b.dataset.m)}});
+  return{start:()=>{if(!token)auto()}};
+})();
+/* 复盘迭代流水线：V1.0 → V5.0 → SOP，循环播放 */
+const Iter={started:false,async run(){if(this.started)return;this.started=true;
+  const st=[0,1,2,3,4].map(i=>$('#p'+i)),lis=$$('#todo li'),bar=$('#bar'),ks=$$('#kiss span'),ver=$('#ver');
+  const on=i=>st.forEach((s,j)=>s.classList.toggle('act',i===j));
+  const bump=v=>{ver.textContent=v;ver.classList.remove('bump');void ver.offsetWidth;ver.classList.add('bump')};
+  for(;;){st[4].classList.remove('gold');bump('V1.0');
+    for(let v=1;v<=5;v++){
+      on(0);lis.forEach(l=>l.classList.remove('ok'));await sleep(400);
+      for(const l of lis){l.classList.add('ok');await sleep(260)}
+      on(1);bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;bar.style.transition='';bar.style.width='100%';await sleep(1300);
+      on(2);ks.forEach(k=>k.classList.remove('lit'));for(const k of ks){k.classList.add('lit');await sleep(240)}await sleep(300);
+      on(3);if(v<5)bump(`V${v+1}.0`);await sleep(900)}
+    on(4);st[4].classList.add('gold');await sleep(3200)}}};
+
+/* 滚动触发：入场动画、导航高亮、各章节动画启动 */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const s=e.target;s.classList.add('in');
+  $$('nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+s.id));
+  if(s.id==='s3')DC.start();if(s.id==='s4')Iter.run()}),{threshold:.3});
+$$('section').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
