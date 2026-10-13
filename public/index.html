@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>十六字真言 V5.0 · 以终为始 目标拆解 发散收敛 复盘迭代</title>
+<title>十六字真言 V6.0 · 以终为始 分而治之 发散收敛 复盘迭代</title>
 <style>
 :root{--bg:#0b0d14;--panel:#141826;--line:#262c40;--ink:#e8ecf5;--mute:#8a93a8;--red:#ff4d5e;--c1:#ff4d5e;--c2:#ffb547;--c3:#3ddc97;--c4:#4da3ff}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -57,8 +57,18 @@ h2 em{font-style:normal;color:var(--accent,var(--red));text-shadow:0 0 36px var(
 .loop{width:min(760px,92vw);height:auto;margin-bottom:6px;overflow:visible}
 .flow{fill:none;stroke:var(--red);stroke-width:3;stroke-dasharray:10 10;animation:flow 1.2s linear infinite}
 @keyframes flow{to{stroke-dashoffset:-40}}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;width:min(1040px,100%)}
-.card{perspective:1000px;height:230px;cursor:pointer;outline:none}
+.views{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;width:min(1180px,100%);margin:6px 0 44px}
+.view{position:relative;overflow:hidden;text-align:left;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--vc);border-radius:16px;padding:26px 24px 22px;transition:.45s}
+.view::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 0,var(--vc),transparent 60%);opacity:.08}
+.view:hover{transform:translateY(-7px);border-color:var(--vc);box-shadow:0 16px 44px -20px var(--vc)}
+.view .no{position:absolute;right:16px;top:6px;font-size:42px;font-weight:900;line-height:1;color:var(--line)}
+.view .qt{font-family:"STKaiti","KaiTi","楷体",serif;font-size:clamp(21px,2.4vw,27px);color:var(--vc);letter-spacing:.06em;line-height:1.55;margin-bottom:12px}
+.view .ex{color:var(--mute);font-size:15px;line-height:1.85}
+.divider{display:flex;align-items:center;gap:20px;width:min(1180px,100%);margin:0 0 28px;color:var(--mute);font-size:14px;letter-spacing:.26em}
+.divider::before,.divider::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.divider span{white-space:nowrap}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;width:min(1180px,100%)}
+.card{perspective:1000px;height:222px;cursor:pointer;outline:none}
 .card-in{position:relative;width:100%;height:100%;transition:transform .8s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
 .card:hover .card-in,.card:focus-visible .card-in,.card.flip .card-in{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;border-radius:18px;border:1px solid var(--line);background:var(--panel);backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
@@ -67,21 +77,72 @@ h2 em{font-style:normal;color:var(--accent,var(--red));text-shadow:0 0 36px var(
 .face.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--panel),#1d2236);border-color:var(--cc)}
 .face.back p{color:var(--mute);font-size:15px}
 .face.back b{color:var(--cc);display:block;font-size:19px;margin-bottom:10px}
-/* s2 目标拆解 */
-.tree{width:min(1000px,100%);height:auto;overflow:visible}
-.tree .ln{fill:none;stroke:#566079;stroke-width:2;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 1s ease-out var(--d)}
-.tree .nd{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center;transition:opacity .5s var(--d),transform .6s cubic-bezier(.3,1.7,.5,1) var(--d)}
+.face.back i.badge{display:inline-block;margin-top:12px;font-style:normal;font-size:12px;letter-spacing:.08em;color:#0b0d14;background:var(--cc);border-radius:20px;padding:3px 12px}
+/* s1 · 点击卡片向下弹出的拆解面板 */
+.card.sel .face{border-color:var(--cc);box-shadow:0 0 26px -12px var(--cc)}
+.bd-wrap{--acc:var(--c1);position:relative;width:min(1180px,100%)}
+.bd-caret{position:absolute;top:0;left:50%;width:14px;height:14px;border-radius:3px;background:var(--acc);transform:translate(-50%,-50%) rotate(45deg);opacity:0;transition:left .5s cubic-bezier(.3,1.1,.5,1),opacity .3s,background .3s;pointer-events:none;z-index:2}
+.bd-wrap.open .bd-caret{opacity:1}
+.bd{overflow:hidden;max-height:0;opacity:0;margin-top:0;border:1px solid transparent;border-top:3px solid transparent;border-radius:18px;background:linear-gradient(180deg,rgba(20,24,38,.96),var(--panel));transition:max-height .55s cubic-bezier(.3,1.12,.5,1),opacity .4s,margin-top .4s,border-color .4s,box-shadow .5s}
+.bd-wrap.open .bd{opacity:1;margin-top:28px;border-color:var(--line);border-top-color:var(--acc);box-shadow:0 26px 60px -40px var(--acc)}
+.bd-in{padding:22px 24px 24px}
+.bd-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.bd-h b{font-size:18px;color:var(--acc);letter-spacing:.05em}
+.bd-h span{font-size:14px;color:var(--mute)}
+.bd-chips{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.chip{font:inherit;font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;background:#1a1f30;border:1px solid var(--line);border-radius:12px;padding:12px 6px;color:var(--ink);transition:.3s;text-align:center}
+.chip b{font-size:13px;letter-spacing:.04em;color:var(--mute);transition:.3s}
+.chip:hover,.chip:focus-visible,.chip.on{border-color:var(--acc);background:#1f2233;transform:translateY(-3px);box-shadow:0 10px 24px -16px var(--acc)}
+.chip:hover b,.chip:focus-visible b,.chip.on b{color:var(--acc)}
+.bd-q{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);text-align:center;font-family:"STKaiti","KaiTi","楷体",serif;font-size:20px;color:var(--acc);letter-spacing:.06em;min-height:38px}
+.bd-list{display:grid;gap:12px}
+.bd-list.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bd-list.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.bd-list.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.bd-item{background:#1a1f30;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:12px;padding:14px 16px;transition:.35s}
+.bd-item:hover{transform:translateY(-3px);box-shadow:0 14px 30px -22px var(--acc)}
+.bd-item b{display:block;font-size:15px;color:var(--acc);margin-bottom:6px;letter-spacing:.05em}
+.bd-item p{font-size:14px;color:var(--mute);line-height:1.7}
+/* s2 分而治之 */
+.chain{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:0 0 18px}
+.chain .lv{font-size:15px;letter-spacing:.12em;color:var(--mute);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:6px 18px;transition:.45s}
+.chain .lv.on{border-color:var(--lc);color:var(--lc);box-shadow:0 0 26px -10px var(--lc);transform:translateY(-3px)}
+.chain .cut{font-family:"STKaiti","KaiTi",serif;font-size:15px;color:var(--line);transition:.45s}
+.chain .cut.on{color:var(--red);text-shadow:0 0 16px var(--red);transform:scale(1.3)}
+.tree{width:min(1180px,100%);height:auto;overflow:visible}
+.tree .ln{fill:none;stroke:#4a5470;stroke-width:2;stroke-linecap:round;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset .7s cubic-bezier(.3,.9,.4,1) var(--d)}
 .in .tree .ln{stroke-dashoffset:0}
-.in .tree .nd{opacity:1;transform:scale(1)}
-.tree .nd:hover circle{filter:drop-shadow(0 0 10px var(--red))}
-.tree text{fill:var(--ink);font-size:15px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
-.tree .lbl{font-family:"STKaiti","KaiTi",serif;fill:var(--red);font-size:24px}
+/* 分裂：子节点从父节点中心挤出，再弹向自己的位置 */
+.tree .nd{opacity:0;transform:translate(var(--dx,0px),var(--dy,0px)) scale(var(--s0,.3));transform-box:fill-box;transform-origin:center;transition:opacity .18s var(--d),transform .75s cubic-bezier(.25,1.35,.45,1) var(--d)}
+.in .tree .nd{opacity:1;transform:none}
+.tree .sq{transform-box:fill-box;transform-origin:center}
+.in .tree .sq{animation:sq .42s ease-in-out var(--sd) both}
+@keyframes sq{0%{transform:none}40%{transform:scale(1.16,.84)}75%{transform:scale(.94,1.06)}100%{transform:none}}
+.tree .bst{fill:none;stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.in .tree .bst{animation:bst .7s ease-out var(--d) both}
+@keyframes bst{0%{opacity:0}1%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.3)}}
+.tree .sp{opacity:0}
+.in .tree .sp{animation:sp .6s ease-out var(--d) both}
+@keyframes sp{0%{opacity:0}1%{opacity:1;transform:none}100%{opacity:0;transform:translate(var(--px),var(--py)) scale(.3)}}
+.tree .note{opacity:0;transition:opacity .6s var(--d)}
+.in .tree .note{opacity:1}
+.tree .nd:hover circle{filter:drop-shadow(0 0 12px var(--red))}
+.tree .fork{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center;transition:opacity .4s var(--d),transform .5s cubic-bezier(.3,1.8,.5,1) var(--d)}
+.in .tree .fork{opacity:1;transform:scale(1)}
+.tree .fp{transform-box:fill-box;transform-origin:center;animation:fp 2.4s ease-out infinite}
+@keyframes fp{from{opacity:.5;transform:scale(1)}to{opacity:0;transform:scale(1.85)}}
+.tree text{fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.tree .lbl{font-family:"STKaiti","KaiTi",serif;fill:var(--red);font-size:22px}
 .goal-pulse{transform-box:fill-box;transform-origin:center;animation:gp 2.2s ease-out infinite}
 @keyframes gp{from{opacity:.8;transform:scale(1)}to{opacity:0;transform:scale(2.2)}}
+.tree-play{display:flex;justify-content:center;margin-top:16px}
+#s2 .btn:hover,#s2 .btn:focus-visible{border-color:var(--c2);color:var(--c2);box-shadow:0 0 20px rgba(255,181,71,.35)}
 /* s3 发散收敛 */
 .dc{position:relative;width:min(1000px,100%);aspect-ratio:2/1;border:1px solid var(--line);border-radius:22px;background:radial-gradient(circle at 50% 50%,#161b2c,var(--panel));overflow:hidden}
 .dc canvas{width:100%;height:100%;display:block}
 .dc .phase{position:absolute;left:24px;top:18px;font-size:22px;font-weight:700;letter-spacing:.2em;transition:color .5s}
+.dc .cnt{position:absolute;right:24px;top:18px;font-size:15px;color:var(--mute);letter-spacing:.1em}
+.dc .cnt b{font-size:26px;color:var(--ink);margin-right:4px}
 .btns{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;justify-content:center}
 .btn{font:inherit;font-size:15px;letter-spacing:.15em;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:9px 24px;cursor:pointer;transition:.3s}
 .btn:hover,.btn:focus-visible,.btn.on{border-color:var(--c3);color:var(--c3);box-shadow:0 0 20px rgba(61,220,151,.35)}
@@ -113,7 +174,9 @@ h2 em{font-style:normal;color:var(--accent,var(--red));text-shadow:0 0 36px var(
 .recap a{text-decoration:none;color:var(--qc);font-size:clamp(22px,3.4vw,34px);font-weight:900;letter-spacing:.2em;padding:14px 26px;border:1px solid var(--line);border-radius:18px;transition:.35s}
 .recap a:hover{border-color:var(--qc);box-shadow:0 0 30px var(--qc);transform:translateY(-6px)}
 footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
-@media (max-width:760px){.cards{grid-template-columns:1fr 1fr}.card{height:200px}nav{display:none}.dc{aspect-ratio:1/1}.arw{transform:rotate(90deg);animation:none}}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.bd-chips{grid-template-columns:repeat(4,minmax(0,1fr))}.bd-list.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){.views{grid-template-columns:1fr;margin-bottom:34px}}
+@media (max-width:760px){.cards{grid-template-columns:1fr 1fr}.card{height:200px}nav{display:none}.dc{aspect-ratio:1/1}.arw{transform:rotate(90deg);animation:none}.bd-chips{grid-template-columns:repeat(2,minmax(0,1fr))}.bd-list.two,.bd-list.three,.bd-list.four{grid-template-columns:1fr}.bd-in{padding:18px 16px 20px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -124,7 +187,7 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
 <nav aria-label="章节导航">
   <a href="#hero"><span>十六字真言</span></a>
   <a href="#s1"><span>以终为始</span></a>
-  <a href="#s2"><span>目标拆解</span></a>
+  <a href="#s2"><span>分而治之</span></a>
   <a href="#s3"><span>发散收敛</span></a>
   <a href="#s4"><span>复盘迭代</span></a>
 </nav>
@@ -153,10 +216,10 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
       <g class="spin-r"><circle cx="150" cy="300" r="5" fill="var(--c4)"/><circle cx="450" cy="300" r="4" fill="var(--c2)"/></g>
     </svg>
     <button class="q" data-go="s1" style="left:25.25%;top:25.25%;--qc:var(--c1);animation-delay:1.3s"><i>以终为始</i></button>
-    <button class="q" data-go="s2" style="left:74.75%;top:25.25%;--qc:var(--c2);animation-delay:1.5s"><i>目标拆解</i></button>
+    <button class="q" data-go="s2" style="left:74.75%;top:25.25%;--qc:var(--c2);animation-delay:1.5s"><i>分而治之</i></button>
     <button class="q" data-go="s3" style="left:74.75%;top:74.75%;--qc:var(--c3);animation-delay:1.7s"><i>发散收敛</i></button>
     <button class="q" data-go="s4" style="left:25.25%;top:74.75%;--qc:var(--c4);animation-delay:1.9s"><i>复盘迭代</i></button>
-    <div class="core"><div class="v">V5.0</div><small>点击任一象限</small></div>
+    <div class="core"><div class="v">V6.0</div><small>点击任一象限</small></div>
   </div>
   <div class="hint">↓ 向下滚动，逐环展开</div>
 </section>
@@ -169,38 +232,74 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
     <path d="M60 80 l6 -20 m-6 20 l20 -6" stroke="var(--red)" stroke-width="3" fill="none" stroke-linecap="round"/>
     <text x="380" y="46" text-anchor="middle" class="hand" fill="var(--red)" style="font-size:24px">时常回看，来来往往</text>
   </svg>
+
+  <div class="views">
+    <article class="view rv" style="--vc:var(--c1);--d:.28s">
+      <span class="no">01</span>
+      <p class="qt">站在未来，<br>看回当下</p>
+      <p class="ex">先在脑子里把终局完整过一遍，再从那个点往回推：今天这一步，是不是通向它。</p>
+    </article>
+    <article class="view rv" style="--vc:var(--c2);--d:.38s">
+      <span class="no">02</span>
+      <p class="qt">别管现在有什么，<br>先想要什么</p>
+      <p class="ex">起点不由现状决定。先把想要的结果写清楚，资源、人手、条件都可以后面再补。</p>
+    </article>
+    <article class="view rv" style="--vc:var(--c3);--d:.48s">
+      <span class="no">03</span>
+      <p class="qt">想问题，<br>先想终局</p>
+      <p class="ex">遇到任何问题，先问"最后要变成什么样"，再谈从哪儿下手、先做哪一步。</p>
+    </article>
+  </div>
+
+  <div class="divider rv" style="--d:.55s"><span>目标五要素 · SMART</span></div>
+
   <div class="cards">
-    <div class="card rv" tabindex="0" role="button" aria-label="S 任务是什么" style="--cc:var(--c1);--d:.25s"><div class="card-in">
-      <div class="face"><div class="L">S</div><div class="t">任务是什么？</div></div>
-      <div class="face back"><b>Specific · 具体</b><p>一句话讲清要交付的东西，别人听完不会问“所以要做什么”。</p></div></div></div>
-    <div class="card rv" tabindex="0" role="button" aria-label="M 怎么算做好" style="--cc:var(--c2);--d:.35s"><div class="card-in">
+    <div class="card rv" data-k="S" tabindex="0" role="button" aria-label="S 要做什么" style="--cc:var(--c1);--d:.6s"><div class="card-in">
+      <div class="face"><div class="L">S</div><div class="t">要做什么？</div></div>
+      <div class="face back"><b>Specific · 具体的</b><p>一句话讲清要交付的东西，别人听完不会问“所以要做什么”。</p><i class="badge">拆解为 5W2H ↓</i></div></div></div>
+    <div class="card rv" data-k="M" tabindex="0" role="button" aria-label="M 怎么算做好" style="--cc:var(--c2);--d:.68s"><div class="card-in">
       <div class="face"><div class="L">M</div><div class="t">怎么算做好？</div></div>
       <div class="face back"><b>Measurable · 可衡量</b><p>定义验收标准：数量、质量、指标，做完能被客观检验。</p></div></div></div>
-    <div class="card rv" tabindex="0" role="button" aria-label="T 时间点" style="--cc:var(--c3);--d:.45s"><div class="card-in">
-      <div class="face"><div class="L">T</div><div class="t">时间点</div></div>
-      <div class="face back"><b>Time-bound · 有时限</b><p>截止时间和关键节点，没有时间的目标只是愿望。</p></div></div></div>
-    <div class="card rv" tabindex="0" role="button" aria-label="R 结果和价值" style="--cc:var(--c4);--d:.55s"><div class="card-in">
-      <div class="face"><div class="L">R</div><div class="t">结果和价值？</div></div>
-      <div class="face back"><b>Result · 结果价值</b><p>做成之后带来什么改变，为谁创造了什么价值。</p></div></div></div>
+    <div class="card rv" data-k="A" tabindex="0" role="button" aria-label="A 做得到吗" style="--cc:var(--c3);--d:.76s"><div class="card-in">
+      <div class="face"><div class="L">A</div><div class="t">做得到吗？</div></div>
+      <div class="face back"><b>Achievable · 可达到</b><p>掂量手上的时间、能力和资源，跳一跳够得着，而不是喊口号。</p></div></div></div>
+    <div class="card rv" data-k="R" tabindex="0" role="button" aria-label="R 相关吗" style="--cc:var(--c4);--d:.84s"><div class="card-in">
+      <div class="face"><div class="L">R</div><div class="t">相关吗？</div></div>
+      <div class="face back"><b>Relevant · 相关的</b><p>这件事和终局有关吗？和更大的目标是不是同一条线，还是只是看起来很忙。</p></div></div></div>
+    <div class="card rv" data-k="T" tabindex="0" role="button" aria-label="T 什么时候完成" style="--cc:var(--c1);--d:.92s"><div class="card-in">
+      <div class="face"><div class="L">T</div><div class="t">什么时候完成？</div></div>
+      <div class="face back"><b>Time-bound · 有时间点的</b><p>截止时间和关键节点，没有时间的目标只是愿望。</p></div></div></div>
+  </div>
+
+  <div class="bd-wrap rv" id="bdwrap" style="--d:1s">
+    <span class="bd-caret" id="bdcaret" aria-hidden="true"></span>
+    <div class="bd" id="bd"><div class="bd-in" id="bdin" aria-live="polite"></div></div>
   </div>
 </section>
 
 <section id="s2" style="--accent:var(--c2)">
-  <div class="tag rv">02 · BREAK IT DOWN</div>
-  <h2 class="rv"><em>目标</em>拆解</h2>
-  <p class="sub rv" style="--d:.1s">大事化小，小事化了。目标拆成子目标，子目标拆成今天就能动手的任务。</p>
-  <svg class="tree" id="tree" viewBox="0 0 1000 520" role="img" aria-label="目标拆解为三个子目标，每个子目标拆解为三个任务"></svg>
+  <div class="tag rv">02 · DIVIDE &amp; CONQUER</div>
+  <h2 class="rv"><em>分而</em>治之</h2>
+  <p class="sub rv" style="--d:.1s">先把目标拆成大事，大事拆成小事，小事再拆成今天就能动手的行动。一层一层往下拆，直到每一步都具体到可以直接开干。</p>
+  <div class="chain rv" id="chain" style="--d:.15s">
+    <span class="lv" style="--lc:var(--c1)">目标</span><span class="cut">拆</span>
+    <span class="lv" style="--lc:var(--c2)">大事</span><span class="cut">拆</span>
+    <span class="lv" style="--lc:var(--c3)">小事</span><span class="cut">拆</span>
+    <span class="lv" style="--lc:var(--c4)">可执行的行动</span>
+  </div>
+  <svg class="tree" id="tree" viewBox="0 0 1180 560" role="img" aria-label="分而治之：目标拆成三件大事，每件大事拆成两件小事，每件小事拆成两个可以直接动手的行动"></svg>
+  <div class="tree-play rv" style="--d:.25s"><button class="btn" id="splitReplay">▶ 再拆一遍</button></div>
 </section>
 
 <section id="s3" style="--accent:var(--c3)">
   <div class="tag rv">03 · DIVERGE &amp; CONVERGE</div>
   <h2 class="rv"><em>发散</em>收敛</h2>
-  <p class="sub rv" style="--d:.1s">面对一个任务，先把可能性尽量铺开，再筛选、排序、连成可执行的路径。</p>
-  <div class="dc rv" style="--d:.2s"><canvas id="dc" aria-label="发散与收敛动画"></canvas><div class="phase" id="phase">发散策略</div></div>
+  <p class="sub rv" style="--d:.1s">一个问题，先发散出一大堆可能的思路；再从中选出 <b>10</b> 个可能的；最后收敛到 <b>5</b> 个，马上开始执行。</p>
+  <div class="dc rv" style="--d:.2s"><canvas id="dc" aria-label="发散与收敛动画"></canvas><div class="phase" id="phase">问题</div><div class="cnt" id="dcCnt"></div></div>
   <div class="btns rv" style="--d:.3s">
-    <button class="btn" data-m="div">发散</button><button class="btn" data-m="conv">收敛</button><button class="btn on" data-m="auto">自动播放</button>
+    <button class="btn" data-m="div">① 发散</button><button class="btn" data-m="pick">② 选出 10 个</button><button class="btn" data-m="conv">③ 收敛到 5 个</button><button class="btn on" data-m="auto">自动播放</button>
   </div>
-  <p class="hand rv" style="margin-top:26px;--d:.4s">充分发散，才能有好的收敛</p>
+  <p class="hand rv" style="margin-top:26px;--d:.4s">想得够多，才选得够准；选得够少，才做得够快</p>
 </section>
 <section id="s4" style="--accent:var(--c4)">
   <div class="tag rv">04 · REVIEW &amp; ITERATE</div>
@@ -225,9 +324,9 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
 
 <section id="end">
   <div class="tag rv">RECAP</div>
-  <h2 class="rv">十六字真言 <em>V5.0</em></h2>
+  <h2 class="rv">十六字真言 <em>V6.0</em></h2>
   <div class="recap rv" style="--d:.15s">
-    <a href="#s1" style="--qc:var(--c1)">以终为始</a><a href="#s2" style="--qc:var(--c2)">目标拆解</a><a href="#s3" style="--qc:var(--c3)">发散收敛</a><a href="#s4" style="--qc:var(--c4)">复盘迭代</a>
+    <a href="#s1" style="--qc:var(--c1)">以终为始</a><a href="#s2" style="--qc:var(--c2)">分而治之</a><a href="#s3" style="--qc:var(--c3)">发散收敛</a><a href="#s4" style="--qc:var(--c4)">复盘迭代</a>
   </div>
   <footer class="rv" style="--d:.3s">一个闭环，反复转动 · 根据手绘笔记整理</footer>
 </section>
@@ -258,83 +357,340 @@ addEventListener('pointermove',e=>{$('#glow').style.left=e.clientX+'px';$('#glow
 addEventListener('scroll',()=>{const h=document.documentElement;$('#progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
 
 /* 打字机 */
-(async()=>{const w=['以终为始','目标拆解','发散收敛','复盘迭代'],el=$('#typed');await sleep(1600);
+(async()=>{const w=['以终为始','分而治之','发散收敛','复盘迭代'],el=$('#typed');await sleep(1600);
   for(let k=0;;k=(k+1)%4){for(let i=1;i<=4;i++){el.textContent=w[k].slice(0,i);await sleep(150)}
     await sleep(1500);for(let i=3;i>=0;i--){el.textContent=w[k].slice(0,i);await sleep(70)}await sleep(300)}})();
 
-/* 象限跳转、卡片翻转 */
-$$('.q').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.go).scrollIntoView({behavior:'smooth'}));
-$$('.card').forEach(c=>{c.onclick=()=>c.classList.toggle('flip');c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.classList.toggle('flip')}}});
-/* 目标拆解树 */
-(()=>{const svg=$('#tree'),NS='http://www.w3.org/2000/svg';
-  const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
-  const lines=mk('g',{}),nodes=mk('g',{});
-  const link=(x1,y1,x2,y2,d,hot)=>{const my=(y1+y2)/2,p=mk('path',{class:'ln',d:`M${x1} ${y1} C${x1} ${my},${x2} ${my},${x2} ${y2}`},lines);
-    const L=p.getTotalLength();p.style.setProperty('--len',L);p.style.setProperty('--d',d+'s');if(hot)p.style.stroke='var(--red)';
-    if(!reduce){const dot=mk('circle',{r:3,fill:hot?'var(--red)':'var(--c2)'},lines);
-      const am=mk('animateMotion',{dur:(1.6+Math.random()).toFixed(2)+'s',repeatCount:'indefinite',path:p.getAttribute('d')},dot)}};
-  const node=(x,y,r,d,txt,col)=>{const g=mk('g',{class:'nd'},nodes);g.style.setProperty('--d',d+'s');
-    mk('circle',{cx:x,cy:y,r,fill:'#141826',stroke:col,'stroke-width':3},g);if(txt)mk('text',{x,y},g).textContent=txt;return g};
-  const G={x:500,y:70},subs=[200,500,800],names=['子目标 A','子目标 B','子目标 C'];
-  const pulse=mk('circle',{cx:G.x,cy:G.y,r:46,fill:'none',stroke:'var(--red)','stroke-width':2,class:'goal-pulse'},nodes);
-  node(G.x,G.y,46,0,'目标','var(--red)');
-  subs.forEach((sx,i)=>{link(G.x,G.y+46,sx,240-38,.3+i*.15);node(sx,240,38,.8+i*.15,names[i],'var(--c2)');
-    [-90,0,90].forEach((o,j)=>{const tx=sx+o,d=1.3+i*.25+j*.08,hot=i===2&&j===2;
-      link(sx,278,tx,440-22,d,hot);node(tx,440,22,d+.6,hot?'任务':String(i*3+j+1),hot?'var(--red)':'#8a93a8')})});
-  const l1=mk('text',{x:300,y:130,class:'lbl'},nodes);l1.textContent='大事化小';
-  const l2=mk('text',{x:95,y:345,class:'lbl'},nodes);l2.textContent='小事化“了”';
-  [l1,l2].forEach((t,i)=>{t.classList.add('nd');t.style.setProperty('--d',(1+i*1.2)+'s')});
+/* 卡片点击 → 向下弹出该要素的拆解面板 */
+const BD={
+  S:{title:'S = Specific · 具体的',note:'把“具体”再拆成 5W2H —— 逐个问一遍，任务就清楚了',
+    chips:[
+      ['What','做什么','要交付的到底是什么？一句话说清，别人不用再追问。'],
+      ['Why','为什么做','为什么非做不可？不做会怎样？这个理由撑不撑得住后面所有的取舍。'],
+      ['Who','谁来做','谁负责、谁配合、谁拍板？出了问题找谁。'],
+      ['When','什么时候','什么时候开始，什么时候必须有结果？中间的节点卡在哪儿。'],
+      ['Where','在哪里','在哪儿做、交付到哪儿、给谁用？'],
+      ['How','怎么做','分几步走、用什么方法、先动哪一步？'],
+      ['How much','做到什么程度','做到什么程度算够？要花多少时间、人力、预算？']],
+    items:[
+      ['交付物','一句话讲清最后交出去的东西是什么，别人听完不会问“所以要做什么”。'],
+      ['验收标准','用什么标准判断它合格，最好能被第三方客观检查。'],
+      ['精力上限','这件事最多花掉多少时间与预算，超了就停下来重新谈。']],
+    cols:3},
+  M:{title:'M = Measurable · 可衡量的',note:'没有数字的目标，最后只能靠感觉吵架',
+    items:[
+      ['数量','做多少？几件、几轮、几遍、几次。'],
+      ['质量','做到什么水准？合格线在哪儿，优秀线又在哪儿。'],
+      ['时间','多久做完？单次耗时和整体周期分别是多少。'],
+      ['成本','花多少钱、多少人、多少资源，控制在什么范围。']],
+    cols:4},
+  A:{title:'A = Achievable · 可达到的',note:'掂量的不是梦想，是手上真实的家底',
+    items:[
+      ['能力','现在会做吗？不会的话，学得会吗、要多久。'],
+      ['资源','人、钱、工具、渠道，现在手上真有这些吗。'],
+      ['时间','按现有的能力和资源，这个期限里真的做得完吗。'],
+      ['先例','以前有没有人做成过？他们花了多久、踩了哪些坑。']],
+    cols:4},
+  R:{title:'R = Relevant · 相关的',note:'和终局同一条线上的才叫目标，其余都叫忙',
+    items:[
+      ['对齐终局','做完这件事，离那个最终想要的结果更近了吗。'],
+      ['优先级','它值得排在现在第一位吗？和别的任务比，谁更该先做。'],
+      ['机会成本','做它意味着暂时不做别的，这个交换划算吗。']],
+    cols:3},
+  T:{title:'T = Time-bound · 有时间点的',note:'没有时间的目标只是愿望',
+    items:[
+      ['截止时间','最后期限是哪一天，写下来，而不是“尽快”。'],
+      ['关键节点','中间哪几个时间点必须交付什么，卡住了要立刻暴露。'],
+      ['检查频率','多久看一次进度？每天、每周还是每个节点。'],
+      ['时间盒','给自己一个上限，到点就收，不要无限打磨。']],
+    cols:4}};
+
+const bdWrap=$('#bdwrap'),bd=$('#bd'),bdIn=$('#bdin'),bdCaret=$('#bdcaret');
+const cards=$$('.card');
+let openKey=null;
+const COLN=['','','two','three','four'];
+
+const fit=()=>{if(openKey)bd.style.maxHeight=bdIn.scrollHeight+40+'px'};
+
+const build=key=>{
+  const d=BD[key];
+  let h='<div class="bd-h"><b>'+d.title+'</b><span>'+d.note+'</span></div>';
+  if(d.chips){
+    h+='<div class="bd-chips" id="bdchips">';
+    d.chips.forEach((c,i)=>{h+='<button class="chip'+(i?'':' on')+'" data-q="'+c[2]+'"><b>'+c[0]+'</b>'+c[1]+'</button>'});
+    h+='</div><p class="bd-q" id="bdq" aria-live="polite">'+d.chips[0][2]+'</p>';
+  }
+  h+='<div class="bd-list '+COLN[d.cols]+'" style="margin-top:'+(d.chips?'20px':'0')+'">';
+  d.items.forEach(it=>{h+='<div class="bd-item"><b>'+it[0]+'</b><p>'+it[1]+'</p></div>'});
+  h+='</div>';
+  bdIn.innerHTML=h;
+  bdIn.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    bdIn.querySelectorAll('.chip').forEach(o=>o.classList.toggle('on',o===c));
+    $('#bdq').textContent=c.dataset.q});
+};
+
+const aimCaret=()=>{if(!openKey)return;
+  const card=cards.find(c=>c.dataset.k===openKey);if(!card)return;
+  const col=card.getBoundingClientRect(),box=bdWrap.getBoundingClientRect();
+  bdCaret.style.left=Math.round(col.left+col.width/2-box.left)+'px'};
+
+const closeBd=()=>{
+  if(!openKey)return;
+  openKey=null;
+  bdWrap.classList.remove('open');
+  bd.style.maxHeight='0px';
+  cards.forEach(c=>{c.classList.remove('flip','sel');c.setAttribute('aria-expanded','false')});
+};
+
+const openBd=key=>{
+  const card=cards.find(c=>c.dataset.k===key);
+  if(openKey===key){closeBd();return}
+  openKey=key;
+  cards.forEach(c=>{const on=c===card;c.classList.toggle('flip',on);c.classList.toggle('sel',on);c.setAttribute('aria-expanded',on?'true':'false')});
+  bdWrap.style.setProperty('--acc',getComputedStyle(card).getPropertyValue('--cc').trim()||'#ff4d5e');
+  build(key);
+  bdWrap.classList.add('open');
+  bd.style.maxHeight='0px';
+  aimCaret();
+  requestAnimationFrame(()=>{bd.style.maxHeight=bdIn.scrollHeight+40+'px'});
+};
+
+cards.forEach(c=>{
+  c.setAttribute('aria-expanded','false');
+  const tg=()=>openBd(c.dataset.k);
+  c.onclick=tg;
+  c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}};
+});
+/* 面板跟随卡片：滚动、缩放都重新对准箭头；点页面别处或按 Esc 收起 */
+addEventListener('resize',()=>{fit();aimCaret()});
+addEventListener('scroll',aimCaret,{passive:true});
+document.addEventListener('pointerdown',e=>{if(!openKey)return;
+  if(e.target.closest('.card')||e.target.closest('#bdwrap'))return;
+  closeBd()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openKey)closeBd()});
+/* s2 分而治之：目标 → 大事 → 小事 → 行动，逐层拆开 */
+const Split=(()=>{
+  const svg=$('#tree'),NS='http://www.w3.org/2000/svg';
+  const COL={t:'var(--red)',b:'var(--c2)',s:'var(--c3)',a:'var(--c4)'};
+  const BIG=[180,590,1000],SML=[],ACT=[];
+  BIG.forEach(bx=>SML.push(bx-85,bx+85));
+  SML.forEach(sx=>ACT.push(sx-42,sx+42));
+
+  const mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+  /* 直角带圆角的拆分路线：父 → 分叉横杠 → 子 */
+  const route=(px,pb,cx,ct,fy)=>{const k=10,dir=cx>px?1:cx<px?-1:0;
+    if(!dir)return 'M'+px+' '+pb+' L'+px+' '+ct;
+    return 'M'+px+' '+pb+' L'+px+' '+(fy-k)+' Q'+px+' '+fy+' '+(px+dir*k)+' '+fy+
+           ' L'+(cx-dir*k)+' '+fy+' Q'+cx+' '+fy+' '+cx+' '+(fy+k)+' L'+cx+' '+ct};
+
+  const draw=()=>{
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    const lg=mk('g',{},svg),ng=mk('g',{},svg),fg=mk('g',{},svg);
+
+    const line=(x1,y1,x2,y2,fy,d,col)=>{
+      const p=mk('path',{class:'ln',d:route(x1,y1,x2,y2,fy)},lg);
+      const L=p.getTotalLength();
+      p.style.setProperty('--len',L);p.style.setProperty('--d',d+'s');
+      if(col)p.style.stroke=col;
+      if(!reduce){
+        const dot=mk('circle',{r:3.2,fill:col||'#4a5470'},lg);
+        mk('animateMotion',{dur:(2.2+Math.random()*1.3).toFixed(2)+'s',begin:d+'s',repeatCount:'indefinite',path:p.getAttribute('d')},dot);
+      }
+    };
+    /* 子节点从父节点 (px,py,pr) 中心分裂而出 */
+    const node=(x,y,r,d,txt,col,fs,rw,p)=>{
+      const g=mk('g',{class:'nd'},ng);g.style.setProperty('--d',d+'s');
+      if(p){g.style.setProperty('--dx',(p[0]-x)+'px');g.style.setProperty('--dy',(p[1]-y)+'px');
+        g.style.setProperty('--s0',Math.min(1,p[2]/r*.55).toFixed(2))}
+      mk('circle',{cx:x,cy:y,r,fill:'#141826',stroke:col,'stroke-width':rw||3},g);
+      if(txt){const t=mk('text',{x,y,fill:col,'font-size':fs||15,'font-weight':700},g);t.textContent=txt}
+      return g;
+    };
+    /* 父节点被拆时先“挤压”，再迸出一圈波纹和碎屑 */
+    const burst=(g,x,y,r,d,col)=>{
+      const c=g.querySelector('circle');c.classList.add('sq');c.style.setProperty('--sd',(d-.3).toFixed(2)+'s');
+      if(reduce)return;
+      const b=mk('circle',{cx:x,cy:y,r,stroke:col,class:'bst'},fg);b.style.setProperty('--d',d+'s');
+      for(let k=0;k<8;k++){const an=k/8*Math.PI*2+.3,dist=r*1.1+14;
+        const sp=mk('circle',{cx:x+Math.cos(an)*r,cy:y+Math.sin(an)*r,r:2.4,fill:col,class:'sp'},fg);
+        sp.style.setProperty('--d',d+'s');sp.style.setProperty('--px',(Math.cos(an)*dist*.5).toFixed(1)+'px');
+        sp.style.setProperty('--py',(Math.sin(an)*dist*.5).toFixed(1)+'px')}
+    };
+    const fork=(x,y,r,d)=>{                       /* “拆”的动作标记 */
+      const g=mk('g',{class:'fork'},fg);g.style.setProperty('--d',d+'s');
+      mk('circle',{cx:x,cy:y,r,fill:'none',stroke:COL.b,'stroke-width':1.5,class:'fp'},g);
+      mk('circle',{cx:x,cy:y,r,fill:'var(--red)'},g);
+      const t=mk('text',{x,y,fill:'#0b0d14','font-size':Math.round(r*1.1),'font-weight':900},g);t.textContent='拆';
+      return g;
+    };
+    const T=v=>v.toFixed(2),FLY=.75;
+
+    /* 根 */
+    mk('circle',{cx:590,cy:62,r:46,fill:'none',stroke:'var(--red)','stroke-width':2,class:'goal-pulse'},ng);
+    const root=node(590,62,46,0,'目标','var(--red)',20);
+    /* 第一拆：目标 → 大事 */
+    const t1=.7;
+    fork(590,122,13,t1-.3);burst(root,590,62,46,t1,'var(--red)');
+    const bigT=BIG.map((bx,i)=>{const d=t1+i*.05;
+      line(590,108,bx,169,135,T(d),'#7a839c');
+      node(bx,205,36,T(d),'大事 '+['A','B','C'][i],COL.b,17,0,[590,62,46]);
+      return d});
+    const bigG=[...ng.querySelectorAll('.nd')].slice(-3);
+    /* 第二拆：大事 → 小事 */
+    const smlT=[];
+    BIG.forEach((bx,i)=>{const t2=bigT[i]+FLY+.15+i*.1;
+      fork(bx,258,11,T(t2-.3));burst(bigG[i],bx,205,36,t2,COL.b);
+      [bx-85,bx+85].forEach((sx,j)=>{
+        line(bx,241,sx,326,275,T(t2),'#7a839c');
+        node(sx,350,24,T(t2),String(i*2+j+1),COL.s,16,0,[bx,205,36]);
+        smlT.push(t2)});
+    });
+    const smlG=[...ng.querySelectorAll('.nd')].slice(-6);
+    /* 第三拆：小事 → 可执行的行动 */
+    SML.forEach((sx,i)=>{const t3=smlT[i]+FLY+.1+(i%2)*.06;
+      fork(sx,395,8,T(t3-.3));burst(smlG[i],sx,350,24,t3,COL.s);
+      [sx-42,sx+42].forEach(ax=>{
+        line(sx,374,ax,470,415,T(t3),'#7a839c');
+        node(ax,482,12,T(t3),'',COL.a,0,2.5,[sx,350,24]);
+      });
+    });
+    /* 手写批注 */
+    [['大事化小',355,120,t1+.6],['小事化“了”',300,262,smlT[0]+.5],['拆到能动手为止',590,532,smlT[5]+FLY+.9]]
+      .forEach(a=>{const e=mk('text',{x:a[1],y:a[2],class:'lbl note'},ng);
+        e.textContent=a[0];e.style.setProperty('--d',T(a[3])+'s')});
+  };
+  return {draw};
 })();
-/* 发散收敛画布 */
-const DC=(()=>{const c=$('#dc'),x=c.getContext('2d'),ph=$('#phase');let W=1,H=1,mode='idle',t=0;
-  const core={x:.5,y:.5,tx:.5,ty:.5},N=64;
-  const P=Array.from({length:N},()=>({x:.5,y:.5,tx:.5,ty:.5,a:0,ta:0,r:2+Math.random()*3}));
+
+/* 上方链条跟随拆解进度逐级点亮 */
+const Chain=(()=>{
+  const cells=[...$('#chain').children];let timers=[];
+  const stop=()=>{timers.forEach(clearTimeout);timers=[]};
+  const play=()=>{stop();cells.forEach(c=>c.classList.remove('on'));
+    [150,800,1750,2750].forEach((ms,step)=>{
+      timers.push(setTimeout(()=>cells.forEach((c,i)=>c.classList.toggle('on',i<=step*2)),reduce?0:ms))})};
+  return {play};
+})();
+
+Split.draw();
+setTimeout(()=>Chain.play(),400);
+
+const replay=()=>{const sec=$('#s2');
+  sec.classList.remove('in');
+  Split.draw();
+  void sec.offsetWidth;
+  sec.classList.add('in');
+  Chain.play()};
+$('#splitReplay').onclick=replay;
+$('#tree').addEventListener('click',replay);
+
+/* 发散收敛画布：问题 → 一个一个把思路发散出来 → 筛选出 10 个 → 收敛 5 个去执行 */
+const DC=(()=>{const c=$('#dc'),x=c.getContext('2d'),ph=$('#phase'),cnt=$('#dcCnt');let W=1,H=1,mode='idle',t=0,mt=0,shown=-1,t0=0;
+  const core={x:.5,y:.5,tx:.5,ty:.5},N=64,EX={x:.88,y:.5};
+  const P=Array.from({length:N},()=>({x:.5,y:.5,tx:.5,ty:.5,a:0,ta:0,h:0,th:0,g:0,tg:0,lag:0,r:2+Math.random()*3}));
+  const TEN=[3,9,16,22,29,35,41,48,54,60],FIVE=[9,22,35,48,60];   /* 10 个候选里留下 5 个 */
+  const RND=(a,b)=>a+Math.random()*(b-a);                          /* 随机先后：几个方向同时冒出来 */
+  const SPAN={div:2.6,pick:1.5,conv:1.2};                          /* 整批散完的总时长（秒） */
+  const CYC=1.9,TR=.55;                                            /* 奔向「执行」的节奏：周期 / 途中占比 */
   const fit=()=>{const d=devicePixelRatio;W=c.width=c.clientWidth*d;H=c.height=c.clientHeight*d};
   fit();addEventListener('resize',fit);
-  const set=m=>{mode=m;
-    if(m==='idle'){core.tx=.5;P.forEach(p=>{p.tx=.5;p.ty=.5;p.ta=0});ph.textContent='任务';ph.style.color='var(--ink)'}
-    if(m==='div'){core.tx=.5;P.forEach((p,i)=>{const a=i/N*Math.PI*2+Math.random()*.3,k=.3+Math.random()*.7;
-      p.tx=.5+Math.cos(a)*.44*k;p.ty=.5+Math.sin(a)*.42*k*(W/H>1.5?1:.9);p.ta=1});ph.textContent='发散策略';ph.style.color='var(--c2)'}
-    if(m==='conv'){core.tx=.12;P.forEach((p,i)=>{if(i<15){const row=i/5|0,col=i%5;p.tx=.3+col*.14;p.ty=.25+row*.25;p.ta=1}
-      else{p.tx=.12;p.ty=.5;p.ta=0}});ph.textContent='收敛策略';ph.style.color='var(--c3)'}};
+  const spread=()=>P.forEach((p,i)=>{const a=i/N*Math.PI*2+Math.random()*.16,k=.35+Math.random()*.65;
+    p.tx=.5+Math.cos(a)*.44*k;p.ty=.5+Math.sin(a)*.4*k});
+  const label=(t,col,n,u)=>{ph.textContent=t;ph.style.color=col;setCnt(n,u)};
+  const setCnt=(n,u)=>{cnt.innerHTML=n==null?'':'<b>'+n+'</b>'+u};
+  const set=m=>{mode=m;t0=performance.now();mt=reduce?1e9:0;shown=-1;
+    if(m==='idle'){core.tx=.5;P.forEach(p=>{p.tx=.5;p.ty=.5;p.ta=0;p.th=0;p.tg=0;p.lag=0});label('一个问题','var(--red)')}
+    if(m==='div'){core.tx=.5;spread();
+      P.forEach(p=>{p.ta=1;p.th=0;p.tg=0;p.lag=RND(0,SPAN.div)*RND(.7,1.3)});   /* 方向随机，几个一起冒 */
+      label('① 发散：一大堆可能的思路','var(--c2)',0,'个思路')}
+    if(m==='pick'){core.tx=.5;if(P[0].ta<.5)spread();
+      P.forEach((p,i)=>{const on=TEN.includes(i);p.ta=on?1:.16;p.th=on?1:0;p.tg=0;p.lag=on?RND(0,SPAN.pick):RND(SPAN.pick,SPAN.pick*1.5)});
+      label('② 筛选：选出 10 个可能的','var(--c4)',0,'个候选')}
+    if(m==='conv'){core.tx=.12;
+      P.forEach((p,i)=>{const k=FIVE.indexOf(i);
+        if(k>=0){p.tx=.5;p.ty=.14+k*.18;p.ta=1;p.th=1;p.tg=1;p.lag=RND(0,SPAN.conv)}
+        else if(TEN.includes(i)){p.tx=.3;p.ty=.5+(Math.random()-.5)*.5;p.ta=.12;p.th=0;p.tg=0;p.lag=SPAN.conv*1.2}
+        else{p.tx=.12;p.ty=.5;p.ta=0;p.th=0;p.tg=0;p.lag=0}});
+      label('③ 收敛：留下 5 个，开始执行','var(--c3)',0,'个行动')}};
   const arrow=(x1,y1,x2,y2,col,al)=>{const a=Math.atan2(y2-y1,x2-x1),s=9*devicePixelRatio;
     x.globalAlpha=al;x.strokeStyle=col;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();x.setLineDash([]);
     x.fillStyle=col;x.beginPath();x.moveTo(x2,y2);x.lineTo(x2-s*Math.cos(a-.4),y2-s*Math.sin(a-.4));x.lineTo(x2-s*Math.cos(a+.4),y2-s*Math.sin(a+.4));x.fill()};
-  (function f(){t+=.016;const k=reduce?1:.06,d=devicePixelRatio;x.clearRect(0,0,W,H);
+  const mix=(h,g)=>g>.5?'#3ddc97':h>.5?'#4da3ff':'#ffb547';
+  (function f(){t+=.016;mt=reduce?1e9:(performance.now()-t0)/1000;
+    const k=reduce?1:.06,d=devicePixelRatio;x.clearRect(0,0,W,H);
     core.x+=(core.tx-core.x)*k;const cx=core.x*W,cy=core.y*H;
-    P.forEach(p=>{p.x+=(p.tx-p.x)*k;p.y+=(p.ty-p.y)*k;p.a+=(p.ta-p.a)*k});
-    x.lineWidth=1.5*d;
+    P.forEach(p=>{                                   /* 没轮到的先按在原地，一个一个来 */
+      const rd=mt>=p.lag;let tx=p.tx,ty=p.ty,ta=p.ta,th=p.th,tg=p.tg;
+      if(!rd){
+        if(mode==='div'){tx=core.x;ty=core.y;ta=0;th=0;tg=0}
+        else if(mode==='pick'){ta=p.a;th=p.h}
+        else if(mode==='conv'){tx=p.x;ty=p.y;ta=p.a;th=p.h;tg=p.tg}
+      }
+      p.x+=(tx-p.x)*k;p.y+=(ty-p.y)*k;p.a+=(ta-p.a)*k;p.h+=(th-p.h)*k;p.g+=(tg-p.g)*k});
+    if(mode==='div'){const n=P.filter(p=>mt>=p.lag).length;if(n!==shown){shown=n;setCnt(n,'个思路')}}
+    else if(mode==='pick'){const n=TEN.filter(i=>mt>=P[i].lag).length;if(n!==shown){shown=n;setCnt(n,'个候选')}}
+    else if(mode==='conv'){const n=FIVE.filter(i=>mt>=P[i].lag).length;if(n!==shown){shown=n;setCnt(n,'个行动')}}
+    x.lineWidth=1.5*d;x.font=(13*d)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';
     if(mode!=='conv')P.forEach(p=>{if(p.a<.02)return;const px=p.x*W,py=p.y*H,dd=Math.hypot(px-cx,py-cy);if(dd<40*d)return;
-      const ux=(px-cx)/dd,uy=(py-cy)/dd;arrow(cx+ux*34*d,cy+uy*34*d,px-ux*(p.r+4)*d,py-uy*(p.r+4)*d,'#ffb547',p.a*.45)});
-    else for(let r=0;r<3;r++){x.setLineDash([6*d,6*d]);x.lineDashOffset=-t*40;
-      const q0=P[r*5];arrow(cx+30*d,cy,q0.x*W-12*d,q0.y*H,'#3ddc97',q0.a*.8);
-      for(let j=0;j<4;j++){const a=P[r*5+j],b=P[r*5+j+1];x.setLineDash([6*d,6*d]);arrow(a.x*W+10*d,a.y*H,b.x*W-12*d,b.y*H,'#3ddc97',Math.min(a.a,b.a)*.8)}}
-    P.forEach((p,i)=>{if(p.a<.02)return;x.globalAlpha=p.a;x.fillStyle=mode==='conv'?'#3ddc97':'#ffb547';
-      x.beginPath();x.arc(p.x*W,p.y*H,(mode==='conv'?6:p.r)*d,0,7);x.fill()});
+      const ux=(px-cx)/dd,uy=(py-cy)/dd,col=mix(p.h,0);
+      arrow(cx+34*d*ux,cy+34*d*uy,px-ux*(p.r+(p.h>.5?10:4))*d,py-uy*(p.r+(p.h>.5?10:4))*d,col,p.a*(p.h>.5?.85:.4))});
+    else{const ex=EX.x*W,ey=EX.y*H;x.lineDashOffset=-t*40;let arr=0;
+      const n0=P[FIVE[0]],n9=P[FIVE[FIVE.length-1]];                            /* 五条并成一张行动清单 */
+      x.globalAlpha=.28;x.setLineDash([4*d,8*d]);x.strokeStyle='#3ddc97';x.lineWidth=1.5*d;
+      x.beginPath();x.moveTo(n0.x*W,n0.y*H);x.lineTo(n9.x*W,n9.y*H);x.stroke();
+      FIVE.forEach(i=>{const q=P[i];if(q.g<.05)return;const qx=q.x*W,qy=q.y*H;   /* 点到位的才连线 */
+        x.setLineDash([6*d,6*d]);arrow(cx+30*d,cy,qx-14*d,qy,'#3ddc97',q.a*.7);
+        x.setLineDash([6*d,6*d]);arrow(qx+14*d,qy,ex-34*d,ey+(qy-ey)*.15,'#3ddc97',q.a*.26)});
+      x.setLineDash([]);
+      const bez=(ss,qx,qy,cy2)=>{const ms=1-ss;return[ms*ms*(qx+16*d)+2*ms*ss*((qx+ex)/2)+ss*ss*ex,ms*ms*qy+2*ms*ss*cy2+ss*ss*ey]};
+      FIVE.forEach(i=>{const q=P[i];if(q.g<.5)return;const qx=q.x*W,qy=q.y*H;    /* 排好队的，一个个跑向执行 */
+        const u=(mt-q.lag-.8)/CYC;if(u<0)return;const ph=u-Math.floor(u),cy2=(qy+ey)/2-30*d;
+        if(ph<TR){const ss=ph/TR;const[px,py]=bez(ss,qx,qy,cy2);
+          for(let k=3;k>=1;k--){const s2=ss-k*.055;if(s2<0)continue;const[tx2,ty2]=bez(s2,qx,qy,cy2);
+            x.globalAlpha=q.g*.16*(4-k);x.fillStyle='#7cf5bd';x.beginPath();x.arc(tx2,ty2,(5.5-k*1.1)*d,0,7);x.fill()}   /* 拖尾 */
+          x.globalAlpha=q.g*.35;x.fillStyle='#3ddc97';x.beginPath();x.arc(px,py,13*d,0,7);x.fill();     /* 光晕 */
+          x.globalAlpha=q.g;x.fillStyle='#f2fff8';x.beginPath();x.arc(px,py,5.5*d,0,7);x.fill();        /* 亮点 */
+          arr=Math.max(arr,.5)}
+        else{const rp=(ph-TR)/.3;if(rp<1){arr=Math.max(arr,1-rp);                /* 到了就荡开一圈 */
+          x.globalAlpha=q.g*(1-rp)*.85;x.strokeStyle='#3ddc97';x.lineWidth=2.5*d;
+          x.beginPath();x.arc(ex,ey,(32+54*rp)*d,0,7);x.stroke()}}});
+      const ea=Math.min(...FIVE.map(i=>P[i].g));
+      x.globalAlpha=ea;x.fillStyle='rgba(61,220,151,.15)';x.strokeStyle='#3ddc97';x.lineWidth=2.5*d;
+      x.beginPath();x.arc(ex,ey,(30+Math.sin(t*4)*2+9*arr)*d,0,7);x.fill();x.stroke();
+      x.globalAlpha=ea*(.2+.6*arr);x.lineWidth=2*d;x.beginPath();x.arc(ex,ey,(44+10*arr)*d,0,7);x.stroke();
+      x.globalAlpha=1;x.fillStyle='#3ddc97';x.font='bold '+(15*d)+'px sans-serif';x.fillText('执行',ex,ey);x.lineWidth=1.5*d}
+    P.forEach((p,i)=>{if(p.a<.02)return;const px=p.x*W,py=p.y*H,big=p.h,rr=(p.r+big*(7-p.r)+p.g*4)*d;
+      x.globalAlpha=p.a;x.fillStyle=mix(p.h,p.g);x.beginPath();x.arc(px,py,rr,0,7);x.fill();
+      if(p.a<.92&&mode==='div'){                      /* 刚冒出来的一下，扩散光环 */
+        x.globalAlpha=(1-p.a)*(p.a>.12?p.a*1.6:0);x.strokeStyle='#ffb547';x.lineWidth=2*d;
+        x.beginPath();x.arc(px,py,rr+42*d*(1-p.a),0,7);x.stroke()}
+      if(big>.3){x.globalAlpha=p.a*big*(.35+.25*Math.sin(t*4+i));x.strokeStyle=x.fillStyle;x.beginPath();x.arc(px,py,rr+6*d,0,7);x.stroke()}
+      if(p.g>.5){x.globalAlpha=p.g;x.fillStyle='#0b0d14';x.font='bold '+(12*d)+'px sans-serif';x.fillText(FIVE.indexOf(i)+1,px,py)}});
     x.globalAlpha=1;const pr=(26+Math.sin(t*3)*3)*d;
     x.strokeStyle='#ff4d5e';x.lineWidth=3*d;x.beginPath();x.arc(cx,cy,pr,0,7);x.stroke();
     x.globalAlpha=.3+.3*Math.sin(t*3);x.beginPath();x.arc(cx,cy,pr+10*d,0,7);x.stroke();
-    x.globalAlpha=1;x.fillStyle='#ff4d5e';x.beginPath();x.arc(cx,cy,10*d,0,7);x.fill();
+    x.globalAlpha=1;x.fillStyle='#ff4d5e';x.beginPath();x.arc(cx,cy,14*d,0,7);x.fill();
+    x.fillStyle='#0b0d14';x.font='bold '+(12*d)+'px sans-serif';x.fillText('问题',cx,cy);
     requestAnimationFrame(f)})();
   let token=0;
-  const auto=async()=>{const my=++token;while(my===token){set('idle');await sleep(1000);if(my!==token)return;
-    set('div');await sleep(3800);if(my!==token)return;set('conv');await sleep(4200)}};
-  $$('.btn').forEach(b=>b.onclick=()=>{$$('.btn').forEach(o=>o.classList.toggle('on',o===b));
+  const auto=async()=>{const my=++token;while(my===token){set('idle');await sleep(1200);if(my!==token)return;
+    set('div');await sleep(4200);if(my!==token)return;set('pick');await sleep(3000);if(my!==token)return;set('conv');await sleep(4600)}};
+  $$('.btns .btn').forEach(b=>b.onclick=()=>{$$('.btns .btn').forEach(o=>o.classList.toggle('on',o===b));
     if(b.dataset.m==='auto')auto();else{token++;set(b.dataset.m)}});
   return{start:()=>{if(!token)auto()}};
 })();
-/* 复盘迭代流水线：V1.0 → V5.0 → SOP，循环播放 */
+/* 复盘迭代流水线：V1.0 → V6.0 → SOP，循环播放 */
 const Iter={started:false,async run(){if(this.started)return;this.started=true;
   const st=[0,1,2,3,4].map(i=>$('#p'+i)),lis=$$('#todo li'),bar=$('#bar'),ks=$$('#kiss span'),ver=$('#ver');
   const on=i=>st.forEach((s,j)=>s.classList.toggle('act',i===j));
   const bump=v=>{ver.textContent=v;ver.classList.remove('bump');void ver.offsetWidth;ver.classList.add('bump')};
   for(;;){st[4].classList.remove('gold');bump('V1.0');
-    for(let v=1;v<=5;v++){
+    for(let v=1;v<=6;v++){
       on(0);lis.forEach(l=>l.classList.remove('ok'));await sleep(400);
       for(const l of lis){l.classList.add('ok');await sleep(260)}
       on(1);bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;bar.style.transition='';bar.style.width='100%';await sleep(1300);
       on(2);ks.forEach(k=>k.classList.remove('lit'));for(const k of ks){k.classList.add('lit');await sleep(240)}await sleep(300);
-      on(3);if(v<5)bump(`V${v+1}.0`);await sleep(900)}
+      on(3);if(v<6)bump(`V${v+1}.0`);await sleep(900)}
     on(4);st[4].classList.add('gold');await sleep(3200)}}};
 
 /* 滚动触发：入场动画、导航高亮、各章节动画启动 */
