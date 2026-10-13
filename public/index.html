@@ -39,18 +39,28 @@ h2 em{font-style:normal;color:var(--accent,var(--red));text-shadow:0 0 36px var(
 .spin{transform-origin:300px 300px;animation:spin 40s linear infinite}
 .spin-r{transform-origin:300px 300px;animation:spin 26s linear infinite reverse}
 @keyframes spin{to{transform:rotate(360deg)}}
-.arc{fill:none;stroke-width:10;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;animation:draw 1.4s cubic-bezier(.6,0,.2,1) forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-.axis{stroke:var(--red);stroke-width:2;stroke-dasharray:3 9;opacity:0;animation:fade 1s 1.6s forwards}
+.arc{fill:none;stroke-width:10;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:420;animation:draw 1.4s cubic-bezier(.6,0,.2,1) forwards;pointer-events:stroke;cursor:pointer;transition:stroke-width .3s,filter .3s}
+.arc:hover,.arc.act{stroke-width:14;filter:drop-shadow(0 0 18px var(--qc,var(--red)))}
+.axis{stroke:var(--red);stroke-width:2;stroke-dasharray:3 9;opacity:0;animation:fade 1s 1.6s forwards;pointer-events:none}
 @keyframes fade{to{opacity:.7}}
-.q{position:absolute;white-space:nowrap;transform:translate(-50%,-50%);background:none;border:0;cursor:pointer;color:var(--ink);font:inherit;font-size:clamp(17px,2.6vw,24px);font-weight:700;letter-spacing:.18em;opacity:0;animation:pop .7s cubic-bezier(.3,1.6,.5,1) forwards}
+.q{position:absolute;white-space:nowrap;transform:translate(-50%,-50%);background:none;border:0;cursor:pointer;color:var(--ink);font:inherit;font-size:clamp(17px,2.6vw,24px);font-weight:700;letter-spacing:.18em;opacity:0;animation:pop .7s cubic-bezier(.3,1.6,.5,1) forwards;z-index:10}
 .q i{display:block;font-style:normal;padding:8px 16px;border-radius:30px;background:rgba(20,24,38,.85);border:1px solid var(--line);transition:.35s}
-.q:hover i,.q:focus-visible i{border-color:var(--qc);color:var(--qc);box-shadow:0 0 28px var(--qc);transform:scale(1.12)}
+.q:hover i,.q:focus-visible i,.q.act i{border-color:var(--qc);color:var(--qc);box-shadow:0 0 28px var(--qc);transform:scale(1.12)}
 @keyframes pop{from{opacity:0;transform:translate(-50%,-50%) scale(.3)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-.core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-.core .v{font-size:clamp(34px,6vw,62px);font-weight:900;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c1));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s linear infinite}
-@keyframes sheen{to{background-position:300% 0}}
-.core small{display:block;color:var(--mute);letter-spacing:.3em;font-size:13px}
+.core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:min(280px,50vw);height:min(280px,50vw);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;pointer-events:auto;cursor:pointer;transition:background .4s,box-shadow .4s;z-index:5}
+.core.hovered{background:radial-gradient(circle,rgba(20,24,38,.96) 58%,transparent 72%);box-shadow:0 0 50px -12px var(--exp-c,rgba(255,77,94,.5))}
+.core-default{display:flex;flex-direction:column;align-items:center;transition:opacity .3s,transform .3s}
+.core .v{font-size:clamp(34px,6vw,62px);font-weight:900;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c1));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s linear infinite;line-height:1.1}
+.core small{display:block;color:var(--mute);letter-spacing:.25em;font-size:13px;margin-top:6px;transition:color .3s}
+.core.active .core-default{display:none}
+.core-exp{display:none;flex-direction:column;align-items:center;text-align:center;animation:coreFade .32s cubic-bezier(.2,.8,.2,1) forwards}
+.core.active .core-exp{display:flex}
+@keyframes coreFade{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.core-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.12em;padding:3px 12px;border-radius:20px;background:var(--exp-c,var(--c1));color:#0b0d14}
+.core-quote{font-family:"STKaiti","KaiTi","楷体",serif;font-size:clamp(17px,2.2vw,21px);color:var(--ink);letter-spacing:.06em;line-height:1.35;margin:8px 0 6px}
+.core-list{list-style:none;display:flex;flex-direction:column;gap:3px;padding:0;margin:0 0 8px;font-size:12.5px;color:var(--mute);line-height:1.45}
+.core-jump{display:inline-flex;align-items:center;gap:4px;font-size:12px;letter-spacing:.12em;color:var(--exp-c,var(--c1));text-decoration:none;border-bottom:1px dashed var(--exp-c,var(--c1));padding-bottom:1px;transition:.25s}
+.core:hover .core-jump{filter:brightness(1.25);transform:translateY(1px)}
 .hint{margin-top:30px;color:var(--mute);font-size:13px;letter-spacing:.3em;animation:bob 2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(8px)}}
 /* s1 以终为始 */
@@ -206,10 +216,10 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
         <path d="M508 329.2A210 210 0 0 1 329.2 508" stroke="var(--c3)" class="arc" style="animation-delay:.9s"/>
         <path d="M270.8 508A210 210 0 0 1 92 329.2" stroke="var(--c4)" class="arc" style="animation-delay:1.2s"/>
       </g>
-      <path d="M92 270.8A210 210 0 0 1 270.8 92" stroke="var(--c1)" class="arc" style="animation-delay:.3s"/>
-      <path d="M329.2 92A210 210 0 0 1 508 270.8" stroke="var(--c2)" class="arc" style="animation-delay:.6s"/>
-      <path d="M508 329.2A210 210 0 0 1 329.2 508" stroke="var(--c3)" class="arc" style="animation-delay:.9s"/>
-      <path d="M270.8 508A210 210 0 0 1 92 329.2" stroke="var(--c4)" class="arc" style="animation-delay:1.2s"/>
+      <path d="M92 270.8A210 210 0 0 1 270.8 92" stroke="var(--c1)" class="arc" data-go="s1" style="animation-delay:.3s"/>
+      <path d="M329.2 92A210 210 0 0 1 508 270.8" stroke="var(--c2)" class="arc" data-go="s2" style="animation-delay:.6s"/>
+      <path d="M508 329.2A210 210 0 0 1 329.2 508" stroke="var(--c3)" class="arc" data-go="s3" style="animation-delay:.9s"/>
+      <path d="M270.8 508A210 210 0 0 1 92 329.2" stroke="var(--c4)" class="arc" data-go="s4" style="animation-delay:1.2s"/>
       <line x1="300" y1="20" x2="300" y2="110" class="axis"/><line x1="300" y1="490" x2="300" y2="580" class="axis"/>
       <line x1="20" y1="300" x2="110" y2="300" class="axis"/><line x1="490" y1="300" x2="580" y2="300" class="axis"/>
       <g class="spin"><circle cx="300" cy="90" r="7" fill="var(--red)"/><circle cx="300" cy="510" r="5" fill="var(--c3)"/></g>
@@ -219,7 +229,18 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
     <button class="q" data-go="s2" style="left:74.75%;top:25.25%;--qc:var(--c2);animation-delay:1.5s"><i>分而治之</i></button>
     <button class="q" data-go="s3" style="left:74.75%;top:74.75%;--qc:var(--c3);animation-delay:1.7s"><i>发散收敛</i></button>
     <button class="q" data-go="s4" style="left:25.25%;top:74.75%;--qc:var(--c4);animation-delay:1.9s"><i>复盘迭代</i></button>
-    <div class="core"><div class="v">V6.0</div><small>点击任一象限</small></div>
+    <div class="core" id="core" tabindex="0" role="region" aria-label="核心概览与象限展开">
+      <div class="core-default">
+        <div class="v">V6.0</div>
+        <small id="coreSmall">悬停展开象限</small>
+      </div>
+      <div class="core-exp" id="coreExp" aria-live="polite">
+        <span class="core-badge" id="coreBadge">01 · 以终为始</span>
+        <div class="core-quote" id="coreQuote">站在未来，看回当下</div>
+        <ul class="core-list" id="coreList"></ul>
+        <span class="core-jump" id="coreJump">点击直达章节 ↓</span>
+      </div>
+    </div>
   </div>
   <div class="hint">↓ 向下滚动，逐环展开</div>
 </section>
@@ -361,8 +382,83 @@ addEventListener('scroll',()=>{const h=document.documentElement;$('#progress').s
   for(let k=0;;k=(k+1)%4){for(let i=1;i<=4;i++){el.textContent=w[k].slice(0,i);await sleep(150)}
     await sleep(1500);for(let i=3;i>=0;i--){el.textContent=w[k].slice(0,i);await sleep(70)}await sleep(300)}})();
 
-/* 象限按钮点击跳转 */
-$$('.q').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.go)?.scrollIntoView({behavior:'smooth'}));
+/* 四象限数据：悬停展开核心心法与落地要点 */
+const QD={
+  s1:{num:'01',title:'以终为始',c:'var(--c1)',quote:'站在未来，看回当下',
+    points:['想透终局，倒推今天行动','SMART 目标五要素 & 5W2H 拆解'],jump:'点击直达：以终为始 ↓'},
+  s2:{num:'02',title:'分而治之',c:'var(--c2)',quote:'大事化小，小事化“了”',
+    points:['目标 ➔ 大事 ➔ 小事 ➔ 行动','层层拆解，直到今天能动手'],jump:'点击直达：分而治之 ↓'},
+  s3:{num:'03',title:'发散收敛',c:'var(--c3)',quote:'想得够多选得准，选得少做得到',
+    points:['①广泛发散 ➔ ②筛选 10 个候选','③收敛到 5 个关键行动开干'],jump:'点击直达：发散收敛 ↓'},
+  s4:{num:'04',title:'复盘迭代',c:'var(--c4)',quote:'凡事迭代 15 遍！跑顺成 SOP',
+    points:['计划 ➔ 执行 ➔ KISS 复盘 ➔ 新版','把一次性经验沉淀为固定 SOP'],jump:'点击直达：复盘迭代 ↓'}
+};
+
+const coreEl=$('#core'),coreBadge=$('#coreBadge'),coreQuote=$('#coreQuote'),coreList=$('#coreList'),coreJump=$('#coreJump');
+let activeQ=null,leaveT=0;
+
+const showQuadrant=key=>{
+  clearTimeout(leaveT);
+  activeQ=key;
+  const d=QD[key];
+  if(!d)return;
+  coreEl.style.setProperty('--exp-c',d.c);
+  coreBadge.textContent=d.num+' · '+d.title;
+  coreQuote.textContent=d.quote;
+  coreList.innerHTML=d.points.map(p=>`<li>✦ ${p}</li>`).join('');
+  coreJump.textContent=d.jump;
+  coreEl.classList.add('active','hovered');
+
+  $$('.q').forEach(b=>b.classList.toggle('act',b.dataset.go===key));
+  $$('.arc[data-go]').forEach(a=>{
+    const on=a.dataset.go===key;
+    a.classList.toggle('act',on);
+    if(on)a.style.setProperty('--qc',d.c);
+  });
+};
+
+const hideQuadrant=()=>{
+  clearTimeout(leaveT);
+  leaveT=setTimeout(()=>{
+    activeQ=null;
+    coreEl.classList.remove('active','hovered');
+    $$('.q').forEach(b=>b.classList.remove('act'));
+    $$('.arc[data-go]').forEach(a=>a.classList.remove('act'));
+  },260);
+};
+
+/* 鼠标悬停展开，移出还原；点击仍可平滑跳转到对应章节 */
+$$('.q').forEach(b=>{
+  const key=b.dataset.go;
+  b.addEventListener('pointerenter',()=>showQuadrant(key));
+  b.addEventListener('pointerleave',hideQuadrant);
+  b.addEventListener('mouseenter',()=>showQuadrant(key));
+  b.addEventListener('mouseleave',hideQuadrant);
+  b.onclick=()=>{
+    document.getElementById(key)?.scrollIntoView({behavior:'smooth'});
+  };
+});
+
+/* SVG 象限圆弧同样支持悬停展开与点击跳转 */
+$$('.arc[data-go]').forEach(a=>{
+  const key=a.dataset.go;
+  a.addEventListener('pointerenter',()=>showQuadrant(key));
+  a.addEventListener('pointerleave',hideQuadrant);
+  a.addEventListener('mouseenter',()=>showQuadrant(key));
+  a.addEventListener('mouseleave',hideQuadrant);
+  a.onclick=()=>{
+    document.getElementById(key)?.scrollIntoView({behavior:'smooth'});
+  };
+});
+
+/* 中心圆在激活状态下点击跳转到当前象限 */
+coreEl.addEventListener('pointerenter',()=>{clearTimeout(leaveT)});
+coreEl.addEventListener('pointerleave',hideQuadrant);
+coreEl.onclick=()=>{
+  if(activeQ){
+    document.getElementById(activeQ)?.scrollIntoView({behavior:'smooth'});
+  }
+};
 
 /* 卡片点击 → 向下弹出该要素的拆解面板 */
 const BD={
