@@ -361,6 +361,9 @@ addEventListener('scroll',()=>{const h=document.documentElement;$('#progress').s
   for(let k=0;;k=(k+1)%4){for(let i=1;i<=4;i++){el.textContent=w[k].slice(0,i);await sleep(150)}
     await sleep(1500);for(let i=3;i>=0;i--){el.textContent=w[k].slice(0,i);await sleep(70)}await sleep(300)}})();
 
+/* 象限按钮点击跳转 */
+$$('.q').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.go)?.scrollIntoView({behavior:'smooth'}));
+
 /* 卡片点击 → 向下弹出该要素的拆解面板 */
 const BD={
   S:{title:'S = Specific · 具体的',note:'把“具体”再拆成 5W2H —— 逐个问一遍，任务就清楚了',
