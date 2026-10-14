@@ -88,11 +88,14 @@ h2 em{font-style:normal;color:var(--accent,var(--red));text-shadow:0 0 36px var(
 .face.back p{color:var(--mute);font-size:15px}
 .face.back b{color:var(--cc);display:block;font-size:19px;margin-bottom:10px}
 .face.back i.badge{display:inline-block;margin-top:12px;font-style:normal;font-size:12px;letter-spacing:.08em;color:#0b0d14;background:var(--cc);border-radius:20px;padding:3px 12px}
+.face.back .hint{margin-top:10px;font-size:12px;letter-spacing:.08em;color:var(--mute);opacity:.85}
+@media (hover:none){.face.back .hint{display:none}}
 /* s1 · 点击卡片向下弹出的拆解面板 */
 .card.sel .face{border-color:var(--cc);box-shadow:0 0 26px -12px var(--cc)}
 .bd-wrap{--acc:var(--c1);position:relative;width:min(1180px,100%)}
 .bd-caret{position:absolute;top:0;left:50%;width:14px;height:14px;border-radius:3px;background:var(--acc);transform:translate(-50%,-50%) rotate(45deg);opacity:0;transition:left .5s cubic-bezier(.3,1.1,.5,1),opacity .3s,background .3s;pointer-events:none;z-index:2}
 .bd-wrap.open .bd-caret{opacity:1}
+.bd-wrap.pin .bd-caret::after{content:"已钉住";position:absolute;left:calc(50% + 18px);top:50%;transform:translateY(-50%);font-size:11px;letter-spacing:.1em;color:var(--acc);white-space:nowrap}
 .bd{overflow:hidden;max-height:0;opacity:0;margin-top:0;border:1px solid transparent;border-top:3px solid transparent;border-radius:18px;background:linear-gradient(180deg,rgba(20,24,38,.96),var(--panel));transition:max-height .55s cubic-bezier(.3,1.12,.5,1),opacity .4s,margin-top .4s,border-color .4s,box-shadow .5s}
 .bd-wrap.open .bd{opacity:1;margin-top:28px;border-color:var(--line);border-top-color:var(--acc);box-shadow:0 26px 60px -40px var(--acc)}
 .bd-in{padding:22px 24px 24px}
@@ -277,7 +280,7 @@ footer{color:var(--mute);font-size:13px;margin-top:40px;letter-spacing:.2em}
   <div class="cards">
     <div class="card rv" data-k="S" tabindex="0" role="button" aria-label="S 要做什么" style="--cc:var(--c1);--d:.6s"><div class="card-in">
       <div class="face"><div class="L">S</div><div class="t">要做什么？</div></div>
-      <div class="face back"><b>Specific · 具体的</b><p>一句话讲清要交付的东西，别人听完不会问“所以要做什么”。</p><i class="badge">拆解为 5W2H ↓</i></div></div></div>
+      <div class="face back"><b>Specific · 具体的</b><p>一句话讲清要交付的东西，别人听完不会问“所以要做什么”。</p><i class="badge">拆解为 5W2H ↓</i><p class="hint">悬停即展开 · 点击可钉住</p></div></div></div>
     <div class="card rv" data-k="M" tabindex="0" role="button" aria-label="M 怎么算做好" style="--cc:var(--c2);--d:.68s"><div class="card-in">
       <div class="face"><div class="L">M</div><div class="t">怎么算做好？</div></div>
       <div class="face back"><b>Measurable · 可衡量</b><p>定义验收标准：数量、质量、指标，做完能被客观检验。</p></div></div></div>
@@ -531,17 +534,34 @@ const aimCaret=()=>{if(!openKey)return;
   bdCaret.style.left=Math.round(col.left+col.width/2-box.left)+'px'};
 
 const closeBd=()=>{
+  clearTimeout(hideT);clearTimeout(showT);
   if(!openKey)return;
+  pinned=null;
   openKey=null;
-  bdWrap.classList.remove('open');
+  bdWrap.classList.remove('open','pin');
   bd.style.maxHeight='0px';
   cards.forEach(c=>{c.classList.remove('flip','sel');c.setAttribute('aria-expanded','false')});
 };
+const canHover=matchMedia('(hover:hover) and (pointer:fine)').matches;
+let showT=0,hideT=0,pinned=null;
+/* 悬停展开，点击钉住：点过的面板不会被鼠标移开带走 */
+const hoverOpen=key=>{clearTimeout(showT);clearTimeout(hideT);
+  if(pinned===key)return;                                /* 已钉住，别再排队 */
+  if(pinned)unpin();                                     /* 换一张卡，就把钉住的换掉 */
+  showT=setTimeout(()=>openBd(key,false),70)};
+const hoverHold=()=>{clearTimeout(showT);clearTimeout(hideT)};
+const hoverLeave=()=>{clearTimeout(showT);clearTimeout(hideT);
+  if(pinned)return;                                      /* 钉住的收不起来 */
+  hideT=setTimeout(closeBd,260)};
+const unpin=()=>{pinned=null;bdWrap.classList.remove('pin')};
 
-const openBd=key=>{
+const openBd=(key,pin)=>{                                /* pin=true 来自点击：钉住，鼠标移开也不收 */
+  clearTimeout(showT);clearTimeout(hideT);               /* 清掉排队的悬停，免得刚点开又被收起 */
   const card=cards.find(c=>c.dataset.k===key);
-  if(openKey===key){closeBd();return}
+  if(openKey===key){closeBd();return}                    /* 开着再点一次 = 收起 */
   openKey=key;
+  pinned=pin?key:null;
+  bdWrap.classList.toggle('pin',!!pin);
   cards.forEach(c=>{const on=c===card;c.classList.toggle('flip',on);c.classList.toggle('sel',on);c.setAttribute('aria-expanded',on?'true':'false')});
   bdWrap.style.setProperty('--acc',getComputedStyle(card).getPropertyValue('--cc').trim()||'#ff4d5e');
   build(key);
@@ -553,10 +573,24 @@ const openBd=key=>{
 
 cards.forEach(c=>{
   c.setAttribute('aria-expanded','false');
-  const tg=()=>openBd(c.dataset.k);
+  const tg=()=>openBd(c.dataset.k,true);              /* 点开就钉住 */
   c.onclick=tg;
   c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tg()}};
+  c.onfocus=()=>{if(canHover)hoverOpen(c.dataset.k)};
+  c.onblur=()=>{if(canHover)hoverLeave()};
+  if(canHover){
+    c.addEventListener('pointerenter',()=>hoverOpen(c.dataset.k));
+    c.addEventListener('pointerleave',hoverLeave);
+    c.addEventListener('mouseenter',()=>hoverOpen(c.dataset.k));   /* 兜底：部分触控板/鼠标不派发 pointer 事件 */
+    c.addEventListener('mouseleave',hoverLeave);
+  }
 });
+if(canHover){
+  bdWrap.addEventListener('pointerenter',hoverHold);
+  bdWrap.addEventListener('pointerleave',hoverLeave);
+  bdWrap.addEventListener('mouseenter',hoverHold);
+  bdWrap.addEventListener('mouseleave',hoverLeave);
+  addEventListener('blur',()=>{clearTimeout(showT);clearTimeout(hideT)})};
 /* 面板跟随卡片：滚动、缩放都重新对准箭头；点页面别处或按 Esc 收起 */
 addEventListener('resize',()=>{fit();aimCaret()});
 addEventListener('scroll',aimCaret,{passive:true});
