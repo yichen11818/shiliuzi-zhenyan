@@ -417,46 +417,43 @@ const showQuadrant=key=>{
   });
 };
 
-const hideQuadrant=()=>{
+const hideQuadrant=immediate=>{
   clearTimeout(leaveT);
-  leaveT=setTimeout(()=>{
+  const reset=()=>{
     activeQ=null;
     coreEl.classList.remove('active','hovered');
     $$('.q').forEach(b=>b.classList.remove('act'));
     $$('.arc[data-go]').forEach(a=>a.classList.remove('act'));
-  },260);
+  };
+  if(immediate){reset()}else{leaveT=setTimeout(reset,260)}
 };
 
-/* 鼠标悬停展开，移出还原；点击仍可平滑跳转到对应章节 */
+/* 鼠标悬停展开，移出还原；点击平滑跳转到对应章节并从头播放动画 */
 $$('.q').forEach(b=>{
   const key=b.dataset.go;
   b.addEventListener('pointerenter',()=>showQuadrant(key));
-  b.addEventListener('pointerleave',hideQuadrant);
+  b.addEventListener('pointerleave',()=>hideQuadrant(false));
   b.addEventListener('mouseenter',()=>showQuadrant(key));
-  b.addEventListener('mouseleave',hideQuadrant);
-  b.onclick=()=>{
-    document.getElementById(key)?.scrollIntoView({behavior:'smooth'});
-  };
+  b.addEventListener('mouseleave',()=>hideQuadrant(false));
+  b.onclick=()=>jumpTo(key);
 });
 
 /* SVG 象限圆弧同样支持悬停展开与点击跳转 */
 $$('.arc[data-go]').forEach(a=>{
   const key=a.dataset.go;
   a.addEventListener('pointerenter',()=>showQuadrant(key));
-  a.addEventListener('pointerleave',hideQuadrant);
+  a.addEventListener('pointerleave',()=>hideQuadrant(false));
   a.addEventListener('mouseenter',()=>showQuadrant(key));
-  a.addEventListener('mouseleave',hideQuadrant);
-  a.onclick=()=>{
-    document.getElementById(key)?.scrollIntoView({behavior:'smooth'});
-  };
+  a.addEventListener('mouseleave',()=>hideQuadrant(false));
+  a.onclick=()=>jumpTo(key);
 });
 
 /* 中心圆在激活状态下点击跳转到当前象限 */
 coreEl.addEventListener('pointerenter',()=>{clearTimeout(leaveT)});
-coreEl.addEventListener('pointerleave',hideQuadrant);
+coreEl.addEventListener('pointerleave',()=>hideQuadrant(false));
 coreEl.onclick=()=>{
   if(activeQ){
-    document.getElementById(activeQ)?.scrollIntoView({behavior:'smooth'});
+    jumpTo(activeQ);
   }
 };
 
@@ -664,24 +661,14 @@ const Split=(()=>{
 /* 上方链条跟随拆解进度逐级点亮 */
 const Chain=(()=>{
   const cells=[...$('#chain').children];let timers=[];
-  const stop=()=>{timers.forEach(clearTimeout);timers=[]};
-  const play=()=>{stop();cells.forEach(c=>c.classList.remove('on'));
+  const stop=()=>{timers.forEach(clearTimeout);timers=[];cells.forEach(c=>c.classList.remove('on'))};
+  const play=()=>{stop();
     [150,800,1750,2750].forEach((ms,step)=>{
       timers.push(setTimeout(()=>cells.forEach((c,i)=>c.classList.toggle('on',i<=step*2)),reduce?0:ms))})};
-  return {play};
+  return {play,stop};
 })();
 
 Split.draw();
-setTimeout(()=>Chain.play(),400);
-
-const replay=()=>{const sec=$('#s2');
-  sec.classList.remove('in');
-  Split.draw();
-  void sec.offsetWidth;
-  sec.classList.add('in');
-  Chain.play()};
-$('#splitReplay').onclick=replay;
-$('#tree').addEventListener('click',replay);
 
 /* 发散收敛画布：问题 → 一个一个把思路发散出来 → 筛选出 10 个 → 收敛 5 个去执行 */
 const DC=(()=>{const c=$('#dc'),x=c.getContext('2d'),ph=$('#phase'),cnt=$('#dcCnt');let W=1,H=1,mode='idle',t=0,mt=0,shown=-1,t0=0;
@@ -772,30 +759,166 @@ const DC=(()=>{const c=$('#dc'),x=c.getContext('2d'),ph=$('#phase'),cnt=$('#dcCn
     x.fillStyle='#0b0d14';x.font='bold '+(12*d)+'px sans-serif';x.fillText('问题',cx,cy);
     requestAnimationFrame(f)})();
   let token=0;
+  const reset=()=>{
+    token++;
+    core.x=.5;core.y=.5;core.tx=.5;core.ty=.5;
+    P.forEach(p=>{
+      p.x=.5;p.y=.5;p.tx=.5;p.ty=.5;
+      p.a=0;p.ta=0;p.h=0;p.th=0;p.g=0;p.tg=0;
+      p.lag=0;
+    });
+    mode='idle';t0=performance.now();mt=0;shown=-1;
+    label('一个问题','var(--red)');
+    $$('.btns .btn').forEach(o=>o.classList.toggle('on',o.dataset.m==='auto'));
+  };
   const auto=async()=>{const my=++token;while(my===token){set('idle');await sleep(1200);if(my!==token)return;
     set('div');await sleep(4200);if(my!==token)return;set('pick');await sleep(3000);if(my!==token)return;set('conv');await sleep(4600)}};
   $$('.btns .btn').forEach(b=>b.onclick=()=>{$$('.btns .btn').forEach(o=>o.classList.toggle('on',o===b));
     if(b.dataset.m==='auto')auto();else{token++;set(b.dataset.m)}});
-  return{start:()=>{if(!token)auto()}};
+  return{start:()=>{if(!token)auto()},reset,restart:()=>{reset();auto()}};
 })();
 /* 复盘迭代流水线：V1.0 → V6.0 → SOP，循环播放 */
-const Iter={started:false,async run(){if(this.started)return;this.started=true;
+const Iter=(()=>{
+  let token=0;
   const st=[0,1,2,3,4].map(i=>$('#p'+i)),lis=$$('#todo li'),bar=$('#bar'),ks=$$('#kiss span'),ver=$('#ver');
-  const on=i=>st.forEach((s,j)=>s.classList.toggle('act',i===j));
-  const bump=v=>{ver.textContent=v;ver.classList.remove('bump');void ver.offsetWidth;ver.classList.add('bump')};
-  for(;;){st[4].classList.remove('gold');bump('V1.0');
-    for(let v=1;v<=6;v++){
-      on(0);lis.forEach(l=>l.classList.remove('ok'));await sleep(400);
-      for(const l of lis){l.classList.add('ok');await sleep(260)}
-      on(1);bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;bar.style.transition='';bar.style.width='100%';await sleep(1300);
-      on(2);ks.forEach(k=>k.classList.remove('lit'));for(const k of ks){k.classList.add('lit');await sleep(240)}await sleep(300);
-      on(3);if(v<6)bump(`V${v+1}.0`);await sleep(900)}
-    on(4);st[4].classList.add('gold');await sleep(3200)}}};
+  const on=i=>st.forEach((s,j)=>s?.classList.toggle('act',i===j));
+  const bump=v=>{if(!ver)return;ver.textContent=v;ver.classList.remove('bump');void ver.offsetWidth;ver.classList.add('bump')};
+
+  const reset=()=>{
+    token++;
+    st.forEach(s=>s?.classList.remove('act','gold'));
+    lis.forEach(l=>l?.classList.remove('ok'));
+    if(bar){bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;bar.style.transition=''}
+    ks.forEach(k=>k?.classList.remove('lit'));
+    if(ver){ver.textContent='V1.0';ver.classList.remove('bump')}
+  };
+
+  const run=async()=>{
+    const my=++token;
+    const wait=async ms=>{await sleep(ms);return my===token};
+    for(;;){
+      st[4]?.classList.remove('gold');bump('V1.0');
+      for(let v=1;v<=6;v++){
+        on(0);lis.forEach(l=>l.classList.remove('ok'));
+        if(!await wait(400))return;
+        for(const l of lis){l.classList.add('ok');if(!await wait(260))return}
+        on(1);bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;bar.style.transition='';bar.style.width='100%';
+        if(!await wait(1300))return;
+        on(2);ks.forEach(k=>k.classList.remove('lit'));
+        for(const k of ks){k.classList.add('lit');if(!await wait(240))return}
+        if(!await wait(300))return;
+        on(3);if(v<6)bump(`V${v+1}.0`);
+        if(!await wait(900))return;
+      }
+      on(4);st[4]?.classList.add('gold');
+      if(!await wait(3200))return;
+    }
+  };
+
+  return {
+    start:()=>{if(!token)run()},
+    reset,
+    restart:()=>{reset();run()}
+  };
+})();
+
+/* 四大章节动画重置与重放调度 */
+let jumpTimer=0,jumpKey=null;
+
+const prepareSection=key=>{
+  const sec=document.getElementById(key);
+  if(!sec)return;
+  sec.classList.remove('in');
+  if(key==='s1'){
+    closeBd();
+  }else if(key==='s2'){
+    Split.draw();
+    Chain.stop();
+  }else if(key==='s3'){
+    DC.reset();
+  }else if(key==='s4'){
+    Iter.reset();
+  }
+};
+
+const playSection=key=>{
+  const sec=document.getElementById(key);
+  if(!sec)return;
+  sec.classList.remove('in');
+  void sec.offsetWidth;
+  sec.classList.add('in');
+  if(key==='s1'){
+    closeBd();
+  }else if(key==='s2'){
+    Split.draw();
+    Chain.play();
+  }else if(key==='s3'){
+    DC.restart();
+  }else if(key==='s4'){
+    Iter.restart();
+  }
+};
+
+const replay=()=>playSection('s2');
+$('#splitReplay').onclick=replay;
+$('#tree').addEventListener('click',replay);
+
+const jumpTo=key=>{
+  const target=document.getElementById(key);
+  if(!target)return;
+
+  clearTimeout(jumpTimer);
+  jumpKey=key;
+
+  hideQuadrant(true);
+  prepareSection(key);
+  target.scrollIntoView({behavior:'smooth'});
+
+  let done=false;
+  const finish=()=>{
+    if(done||jumpKey!==key)return;
+    done=true;
+    jumpKey=null;
+    window.removeEventListener('scrollend',onEnd);
+    playSection(key);
+  };
+
+  const onEnd=()=>finish();
+  window.addEventListener('scrollend',onEnd,{once:true});
+
+  const check=()=>{
+    if(done||jumpKey!==key)return;
+    const r=target.getBoundingClientRect();
+    if(Math.abs(r.top)<60){
+      finish();
+    }else{
+      requestAnimationFrame(check);
+    }
+  };
+  requestAnimationFrame(check);
+
+  const dist=Math.abs(target.getBoundingClientRect().top);
+  const est=Math.min(Math.max(dist*0.28,300),850);
+  jumpTimer=setTimeout(finish,est);
+};
+
+/* 顶部导航与底部复盘链接点击同样支持平滑跳转并重播动画 */
+$$('nav a, .recap a').forEach(a=>{
+  const h=a.getAttribute('href');
+  if(h && h.startsWith('#s')){
+    a.onclick=e=>{
+      e.preventDefault();
+      jumpTo(h.slice(1));
+    };
+  }
+});
 
 /* 滚动触发：入场动画、导航高亮、各章节动画启动 */
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const s=e.target;s.classList.add('in');
   $$('nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+s.id));
-  if(s.id==='s3')DC.start();if(s.id==='s4')Iter.run()}),{threshold:.3});
+  if(s.id==='s2'&&!$('#chain .lv.on'))Chain.play();
+  if(s.id==='s3')DC.start();
+  if(s.id==='s4')Iter.start()}),{threshold:.3});
 $$('section').forEach(s=>io.observe(s));
 </script>
 </body>
